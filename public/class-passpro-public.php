@@ -263,17 +263,6 @@ class PassPro_Public {
             $valid_password_id = $this->db->verify_password($submitted_password);
             $password_valid = ($valid_password_id !== false);
         }
-        
-        /**
-         * Filter the password validation result
-         * 
-         * @since 1.0.1
-         * 
-         * @param bool $password_valid Whether the password is valid
-         * @param string $submitted_password The submitted password
-         * @return bool Modified validation result
-         */
-        $password_valid = apply_filters('passpro_password_validation', $password_valid, $submitted_password);
 
         if ($password_valid) {
             // Set cookie - lasts for 1 day by default

@@ -92,13 +92,10 @@ Yes, PassPro works with most popular caching plugins.
 
 == Changelog ==
 
-= 1.0.1 =
-* Added new 'passpro_password_validation' filter hook to allow developers to modify password validation behavior
-
 = 1.0.0 =
 * Initial release
 
 == Upgrade Notice ==
 
-= 1.0.1 =
-This update adds a new developer filter hook for more flexible password validation customization. 
+= 1.0.0 =
+Initial release of PassPro 
