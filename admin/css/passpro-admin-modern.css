@@ -1,0 +1,727 @@
+/* You can add more specific styles below */
+
+/* PassPro Modern Admin Styles */
+
+/* General Wrapper */
+.passpro-admin-modern-wrap {
+    margin-top: 20px;
+}
+
+/* Page title */
+.passpro-admin-modern-wrap h1 {
+    font-size: 23px;
+    font-weight: 400;
+    margin: 0 0 15px;
+    padding: 9px 0 4px;
+    line-height: 1.3;
+}
+
+/* Settings Tabs */
+.passpro-admin-modern-wrap .nav-tab-wrapper {
+    border-bottom: 1px solid #ccd0d4;
+    margin-bottom: 20px; /* Space between tabs and content */
+    padding-top: 9px;
+}
+
+/* Style the individual tab links */
+.passpro-admin-modern-wrap .nav-tab {
+    padding: 10px 15px;
+    margin: 0 5px -1px 0; /* Overlap bottom border */
+    border: 1px solid #ccd0d4;
+    background: #f6f7f7;
+    color: #3c434a;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.4;
+    border-radius: 3px 3px 0 0;
+    transition: background 0.1s ease-in-out, border-color 0.1s ease-in-out;
+}
+
+/* Active tab style */
+.passpro-admin-modern-wrap .nav-tab-active,
+.passpro-admin-modern-wrap .nav-tab-active:hover,
+.passpro-admin-modern-wrap .nav-tab-active:focus {
+    background: #fff;
+    border-bottom-color: #fff;
+    color: #222;
+    font-weight: 600;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top: 1px solid #2271b1;
+}
+
+/* Hover/focus for inactive tabs */
+.passpro-admin-modern-wrap .nav-tab:hover,
+.passpro-admin-modern-wrap .nav-tab:focus {
+    background: #fff;
+    color: #222;
+}
+
+/* Tab Content Area */
+.passpro-admin-modern-wrap #passpro-settings-tabs > div {
+    display: none; /* JS handles showing active tab */
+    background-color: #fff;
+    border: 1px solid #ccd0d4;
+    border-top: none; /* Top border provided by tab wrapper */
+    border-radius: 0 0 4px 4px;
+    padding: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    margin-bottom: 20px;
+}
+
+.passpro-admin-modern-wrap #passpro-settings-tabs > div.passpro-tab-active {
+    display: block; /* JS will add this class */
+}
+
+/* Remove default h2 title within tab content if tabs are used */
+.passpro-admin-modern-wrap #passpro-settings-tabs h2 {
+    display: none;
+}
+
+/* Form table styling */
+.passpro-admin-modern-wrap .form-table {
+    background-color: #fff;
+    border-radius: 3px;
+    margin-top: 0;
+}
+
+/* Field row styling */
+.passpro-admin-modern-wrap .form-table td,
+.passpro-admin-modern-wrap .form-table th {
+    vertical-align: top;
+    padding: 15px 10px 15px 0;
+}
+
+.passpro-admin-modern-wrap .form-table th {
+    width: 200px;
+    font-weight: 600;
+    color: #23282d;
+}
+
+/* Input field styling */
+.passpro-admin-modern-wrap input[type="text"], 
+.passpro-admin-modern-wrap input[type="password"],
+.passpro-admin-modern-wrap input[type="number"],
+.passpro-admin-modern-wrap textarea,
+.passpro-admin-modern-wrap select {
+    border-radius: 4px;
+    border: 1px solid #8c8f94;
+    padding: 5px 8px;
+    box-shadow: 0 0 0 transparent;
+}
+
+.passpro-admin-modern-wrap input[type="text"]:focus,
+.passpro-admin-modern-wrap input[type="password"]:focus,
+.passpro-admin-modern-wrap input[type="number"]:focus,
+.passpro-admin-modern-wrap textarea:focus,
+.passpro-admin-modern-wrap select:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: 2px solid transparent;
+}
+
+/* Descriptions */
+.passpro-admin-modern-wrap p.description {
+    font-style: normal;
+    font-size: 13px;
+    color: #646970;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+/* Button styling */
+.passpro-admin-modern-wrap .button-primary {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: none;
+    border-radius: 3px;
+    padding: 0 10px;
+    font-size: 13px;
+    line-height: 2.15384615;
+    min-height: 30px;
+}
+
+.passpro-admin-modern-wrap .button-primary:hover,
+.passpro-admin-modern-wrap .button-primary:focus {
+    background: #135e96;
+    border-color: #135e96;
+    color: #fff;
+}
+
+/* Section Styling - Particularly for Button Styles tab */
+.passpro-admin-modern-wrap .settings-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.passpro-admin-modern-wrap .settings-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Fix for the heading fields in the Button tab */
+.passpro-admin-modern-wrap #passpro-tab-button h4 {
+    font-size: 14px;
+    margin: 1.5em 0 0.5em;
+    padding-bottom: 0.2em;
+    border-bottom: 1px solid #eee;
+    color: #23282d;
+}
+
+/* Hide the duplicate heading labels */
+.passpro-admin-modern-wrap #passpro-tab-button th:has(+ td:empty),
+.passpro-admin-modern-wrap #passpro-tab-button td:empty {
+    display: none;
+}
+
+/* Style section headings */
+.passpro-admin-modern-wrap .section-heading {
+    font-weight: 600;
+    font-size: 16px;
+    color: #23282d;
+    background: #f6f7f7;
+    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    border-left: 4px solid #2271b1;
+    border-radius: 0 3px 3px 0;
+}
+
+/* Style the subsection headings */
+.passpro-admin-modern-wrap .subsection-heading {
+    font-weight: 500;
+    font-size: 14px;
+    color: #23282d;
+    margin: 15px 0 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Group related fields together with subtle borders */
+.passpro-admin-modern-wrap .field-group {
+    border: 1px solid #f0f0f1;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background: #fcfcfc;
+}
+
+.passpro-admin-modern-wrap .field-group > h4,
+.passpro-admin-wrap .field-group > p {
+    margin-top: 0;
+}
+
+/* Style the Color Picker fields better */
+.passpro-admin-modern-wrap .wp-picker-container {
+    display: inline-block;
+}
+
+.passpro-admin-modern-wrap .wp-picker-container .wp-color-result {
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    padding: 0 0 0 30px;
+    margin: 0 6px 6px 0;
+    height: 30px;
+    box-shadow: 0 1px 0 #ccc;
+}
+
+.passpro-admin-modern-wrap .wp-picker-container .wp-color-result-text {
+    height: 28px;
+    line-height: 28px;
+    border-radius: 0 2px 2px 0;
+    background: #f6f7f7;
+    border-left: 1px solid #dcdcde;
+    padding: 0 10px;
+}
+
+/* Button padding field group styling */
+.passpro-admin-modern-wrap .padding-fields-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 5px;
+}
+
+.passpro-admin-modern-wrap .padding-fields-container > div {
+    text-align: center;
+    background: #f6f7f7;
+    padding: 10px;
+    border-radius: 4px;
+    flex: 1 1 60px;
+    border: 1px solid #f0f0f1;
+}
+
+.passpro-admin-modern-wrap .padding-fields-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.passpro-admin-modern-wrap .padding-fields-container input[type="number"] {
+    width: 100%;
+    text-align: center;
+}
+
+/* Logo uploader field */
+.passpro-admin-modern-wrap .passpro-media-uploader {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.passpro-admin-modern-wrap .passpro-media-uploader .regular-text {
+    flex: 1 1 250px;
+}
+
+.passpro-admin-modern-wrap .passpro-media-uploader .button {
+    flex: 0 0 auto;
+}
+
+.passpro-admin-modern-wrap .passpro-logo-preview {
+    flex-basis: 100%;
+    margin-top: 10px;
+}
+
+.passpro-admin-modern-wrap .passpro-logo-preview img {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 5px;
+    background: #fff;
+    max-width: 200px;
+    max-height: 80px;
+}
+
+/* Add Form / Edit Form on Passwords Page */
+.passpro-admin-modern-wrap .passpro-password-form {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    margin-bottom: 20px;
+}
+
+.passpro-admin-modern-wrap .passpro-password-form h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #23282d;
+}
+
+/* Status Box on Passwords Page */
+.passpro-admin-modern-wrap .passpro-password-status {
+    background-color: #fff;
+    padding: 15px 20px;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    margin-bottom: 20px;
+    max-width: 600px; /* Optional: constrain width */
+}
+
+.passpro-admin-modern-wrap .passpro-password-status h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    color: #23282d;
+}
+
+.passpro-admin-modern-wrap .passpro-password-status p {
+    margin-bottom: 5px;
+}
+
+.passpro-admin-modern-wrap .passpro-password-status .protection-enabled {
+    color: #006400; /* Dark Green */
+}
+
+.passpro-admin-modern-wrap .passpro-password-status .protection-disabled {
+    color: #8B0000; /* Dark Red */
+}
+
+/* Style the table wrapper on password page */
+.passpro-admin-modern-wrap .passpro-passwords-table {
+    margin-top: 20px;
+}
+
+.passpro-admin-modern-wrap .passpro-passwords-table h3 {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    color: #23282d;
+}
+
+/* Password list table */
+.passpro-admin-modern-wrap .passpro-passwords-table .wp-list-table {
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.passpro-admin-modern-wrap .passpro-passwords-table .row-actions {
+    margin-top: 4px;
+}
+
+.passpro-admin-modern-wrap .passpro-passwords-table .delete {
+    color: #b32d2e;
+}
+
+.passpro-admin-modern-wrap .passpro-passwords-table .expired {
+    color: #b32d2e;
+    font-weight: 500;
+}
+
+/* Form fields within the password add/edit form */
+.passpro-admin-modern-wrap .passpro-password-form .form-table th,
+.passpro-admin-modern-wrap .passpro-password-form .form-table td {
+    padding: 15px 10px 15px 0;
+}
+
+.passpro-admin-modern-wrap .passpro-password-form .form-table th {
+    width: 200px;
+    font-weight: 600;
+}
+
+.passpro-admin-modern-wrap .passpro-password-form .form-table th .required {
+    color: #dc3232;
+}
+
+.passpro-admin-modern-wrap .passpro-password-form input[type="text"],
+.passpro-admin-modern-wrap .passpro-password-form input[type="password"],
+.passpro-admin-modern-wrap .passpro-password-form input[type="number"],
+.passpro-admin-modern-wrap .passpro-password-form input[type="url"],
+.passpro-admin-modern-wrap .passpro-password-form textarea {
+    width: 100%;
+    max-width: 400px; /* Adjust as needed */
+}
+
+.passpro-admin-modern-wrap .passpro-password-form input[type="datetime-local"] {
+    max-width: 250px;
+}
+
+.passpro-admin-modern-wrap .passpro-password-form p.description {
+    margin-top: 5px;
+}
+
+/* Consider using tabs for better organization on settings page */
+/* .passpro-admin-modern-wrap .nav-tab-wrapper {
+
+} */
+
+/* Fix specifically for the Button Styles tab duplicated headings */
+/* Using class selectors is more reliable than pseudo-selectors */
+.passpro-admin-modern-wrap #passpro-tab-button .section-heading {
+    display: block;
+    width: 100%;
+    padding: 12px 10px;
+    margin: 25px 0 15px;
+    background: #f6f7f7;
+    border-left: 4px solid #2271b1;
+    font-size: 15px;
+    font-weight: 600;
+    color: #23282d;
+    border-radius: 0 3px 3px 0;
+}
+
+/* Style the padding fields container better */
+.passpro-admin-modern-wrap .padding-fields-container {
+    background: #f6f7f7;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid #dcdcde;
+    max-width: 450px;
+    margin-top: 5px;
+}
+
+/* Better styling for all settings groups */
+.passpro-admin-modern-wrap .form-table tbody tr {
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.passpro-admin-modern-wrap .form-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+/* Fix tab navigation */
+.passpro-admin-modern-wrap .nav-tab-wrapper {
+    margin-bottom: 0;
+}
+
+/* Custom styling for button tab */
+.passpro-admin-modern-wrap #passpro-tab-button h4 {
+    background: #f6f7f7;
+    padding: 8px 12px;
+    margin: 20px -12px 15px;
+    border-left: 3px solid #2271b1;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* Add more spacing between settings sections */
+.passpro-admin-modern-wrap .form-table {
+    margin-top: 0;
+    padding: 20px;
+    border-top: none;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+/* Submit button container */
+.passpro-admin-modern-wrap .submit {
+    padding: 15px 0;
+    margin-top: 20px;
+    border-top: 1px solid #f0f0f1;
+}
+
+/* Additional spacing for tab content */
+.passpro-admin-modern-wrap #passpro-settings-tabs > div.passpro-tab-active {
+    min-height: 300px; /* Ensure enough space */
+}
+
+/* Button styles section - special handling */
+.passpro-admin-modern-wrap #passpro-tab-button .form-table {
+    border-top: none;
+    margin-top: 0;
+}
+
+/* Create styled section headings for button categories */
+.passpro-admin-modern-wrap #passpro-tab-button .section-heading {
+    background: #f0f6fc;
+    color: #2271b1;
+    padding: 12px 15px;
+    margin: 25px -20px 20px -20px;
+    border-left: 4px solid #2271b1;
+    font-size: 15px;
+    font-weight: 600;
+    display: block;
+    width: calc(100% + 40px);
+}
+
+/* Hide empty cells next to section headings */
+.passpro-admin-modern-wrap #passpro-tab-button .section-heading + td {
+    display: none;
+}
+
+/* First section heading should have less top margin */
+.passpro-admin-modern-wrap #passpro-tab-button .form-table tr:first-child .section-heading {
+    margin-top: 0;
+}
+
+/* Style the field labels within button sections */
+.passpro-admin-modern-wrap #passpro-tab-button .form-table tr:not(:has(.section-heading)) th {
+    width: 35%;
+    font-weight: 500;
+    padding-left: 15px;
+}
+
+/* Add subtle dividers between button setting fields */
+.passpro-admin-modern-wrap #passpro-tab-button .form-table tr:not(:has(.section-heading)):not(:last-child) {
+    border-bottom: 1px solid #f0f0f1;
+}
+
+/* Create visual field groups */
+.passpro-admin-modern-wrap #passpro-tab-button .field-group {
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+/* Style new color picker fields with labels */
+.passpro-admin-modern-wrap .color-picker-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+/* Field grouping for related settings */
+.passpro-admin-modern-wrap .button-field-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.passpro-admin-modern-wrap .button-field-row .button-field {
+    flex: 1 1 200px;
+}
+
+.passpro-admin-modern-wrap .button-field-row .button-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+/* Button preview */
+.passpro-admin-modern-wrap .button-preview {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f6f7f7;
+    border: 1px dashed #ccd0d4;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.passpro-admin-modern-wrap .button-preview-title {
+    margin-bottom: 15px;
+    font-weight: 600;
+    text-align: center;
+    font-size: 14px;
+    color: #50575e;
+}
+
+/* Remove redundant duplicated heading styles */
+.passpro-admin-modern-wrap #passpro-tab-button th:has(+ td:empty),
+.passpro-admin-modern-wrap #passpro-tab-button td:empty {
+    display: none;
+}
+
+/* Button preview container */
+.button-preview {
+    background-color: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    padding: 25px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.button-preview-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d2327;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.preview-form {
+    background-color: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 0;
+    padding: 26px;
+    max-width: 320px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+/* Add a container for the button that mimics p.submit */
+.preview-form .preview-button-container {
+    margin-top: 16px;
+    width: 100%;
+    overflow: hidden; /* Clearfix for floats */
+    box-sizing: border-box;
+}
+
+.preview-label {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 14px;
+    color: #3c434a;
+}
+
+.preview-input {
+    width: 100%;
+    padding: 3px;
+    font-size: 24px;
+    line-height: normal;
+    border: 1px solid #8c8f94;
+    border-radius: 3px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+.preview-button {
+    display: inline-block;
+    min-width: 80px;
+    padding: 10px 15px;
+    background-color: #0073aa;
+    color: #ffffff;
+    border: 1px solid #0073aa;
+    border-radius: 3px;
+    font-size: 14px;
+    line-height: 1.5;
+    cursor: pointer;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+/* Make sure color picker controls appear above other elements */
+.wp-picker-container {
+    position: relative;
+    z-index: 100;
+}
+
+/* Fix the color picker positioning */
+.passpro-admin-modern-wrap .wp-picker-container .wp-picker-holder {
+    position: absolute;
+    z-index: 100;
+}
+
+/* Field Group for Button Text Label - simplified to match other fields */
+.field-group #passpro_button_text_label,
+.passpro-admin-modern-wrap #passpro_button_text_label {
+    border: 1px solid #8c8f94;
+    padding: 5px 8px;
+    font-size: inherit;
+    width: 100%;
+    max-width: 400px;
+    background-color: #fff;
+}
+
+.field-group #passpro_button_text_label:focus,
+.passpro-admin-modern-wrap #passpro_button_text_label:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+/* Remove special styling for Button Text Label group */
+.passpro-wrapper .field-group.field-passpro_button_text_label {
+    /* Reset to default styles */
+    margin-bottom: inherit;
+    padding: inherit;
+    background-color: inherit;
+    border-left: inherit;
+    border-radius: inherit;
+}
+
+/* Remove special note for Button Text Label */
+.field-group.field-passpro_button_text_label label::after,
+.passpro-admin-modern-wrap label[for="passpro_button_text_label"]::after {
+    content: none;
+}
+
+/* Reset label to normal styling */
+.passpro-admin-modern-wrap label[for="passpro_button_text_label"] {
+    font-weight: inherit;
+    color: inherit;
+    font-size: inherit;
+}
+
+/* Remove special background for the row */
+.passpro-admin-modern-wrap tr:has(#passpro_button_text_label) {
+    background-color: inherit;
+    border-left: inherit;
+}
+
+/* Remove special highlight */
+.highlight-button-text-label {
+    background-color: inherit !important;
+    border: inherit !important;
+    border-left: inherit !important;
+    padding: inherit !important;
+    margin-bottom: inherit !important;
+    margin-top: inherit !important;
+    border-radius: inherit !important;
+    box-shadow: inherit !important;
+}
+
+.highlight-button-text-label td,
+.highlight-button-text-label th {
+    padding: inherit !important;
+} 

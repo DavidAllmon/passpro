@@ -1,0 +1,91 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+/* Style the login page similar to wp-login.php */
+.login-passpro #login {
+    width: 320px;
+    padding: 8% 0 0;
+    margin: auto;
+}
+
+.login-passpro #login h1 {
+    text-align: center;
+}
+
+.login-passpro #login h1 a {
+    background-image: none; /* Or set your own logo */
+    width: auto;
+    height: auto;
+    text-indent: 0;
+    display: inline-block;
+    font-size: 20px;
+    font-weight: bold;
+    color: #444;
+    text-decoration: none;
+}
+
+.login-passpro #loginform {
+    margin-top: 20px;
+    margin-left: 0;
+    padding: 26px 24px 26px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,.13);
+}
+
+.login-passpro #loginform p {
+    margin-bottom: 16px;
+}
+
+.login-passpro #loginform p:last-of-type {
+    margin-bottom: 0;
+}
+
+.login-passpro #loginform label {
+    color: #72777c;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.login-passpro #loginform input[type=password] {
+    font-size: 24px;
+    width: 100%;
+    padding: 3px;
+    margin: 2px 0 12px 0;
+    line-height: normal;
+    height: auto;
+    box-sizing: border-box;
+}
+
+.login-passpro #loginform .submit {
+    margin-top: 16px;
+    margin-bottom: 0;
+}
+
+.login-passpro #loginform .submit #wp-submit {
+    float: right;
+}
+
+.login-passpro .passpro-error {
+    margin-bottom: 1em;
+    padding: 12px;
+    background-color: #fff;
+    border-left: 4px solid #dc3232;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    color: #444;
+}
+
+/* Ensure proper button text alignment */
+.login-passpro #loginform .submit #wp-submit[style*="height"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Fallback for buttons with auto height */
+.login-passpro #loginform .submit #wp-submit:not([style*="height"]) {
+    line-height: 1.5;
+    display: inline-block;
+} 
