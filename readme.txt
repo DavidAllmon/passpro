@@ -5,7 +5,7 @@ Tags: password, protection, security, site protection, password protection
 Requires at least: 5.2
 Tested up to: 6.5
 Requires PHP: 7.2
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,7 @@ Unlike other password protection plugins, PassPro offers extensive customization
 * **Custom Branding** - Add your own logo, colors, and styling to match your brand
 * **Session Management** - Control how long passwords remain valid
 * **Logout Button** - Optionally show a logout button for visitors to end their session
+* **Security Enhancements** - Block chat widgets and third-party scripts on the login page
 
 ### Use Cases
 
@@ -92,10 +93,16 @@ Yes, PassPro works with most popular caching plugins.
 
 == Changelog ==
 
+= 1.0.1 =
+* Added enhanced security features to block chat widgets and floating elements on the password page
+* Added JavaScript to intercept and prevent loading of third-party scripts during password protection
+* Added CSS to hide any chat widgets that might bypass script blocking
+* Improved security by dequeuing chat scripts and styles when protection is active
+
 = 1.0.0 =
 * Initial release
 
 == Upgrade Notice ==
 
-= 1.0.0 =
-Initial release of PassPro 
+= 1.0.1 =
+Security enhancement: This update blocks chat widgets and third-party scripts on the password page to prevent potential information leakage. 

@@ -96,8 +96,92 @@ class PassPro_Public {
         // Only enqueue styles if protection is active and needed
         if ( $this->is_protection_needed() ) {
 		    wp_enqueue_style( $this->plugin_name, PASSPRO_PLUGIN_URL . 'public/css/passpro-public.css', array(), $this->version, 'all' );
+            
+            // If protection is needed, also stop other scripts and styles that might add chat widgets
+            add_action('wp_print_scripts', array($this, 'dequeue_chat_scripts'), 100);
+            add_action('wp_print_styles', array($this, 'dequeue_chat_styles'), 100);
         }
 	}
+
+    /**
+     * Dequeue scripts that might be loading chat widgets
+     * 
+     * @since    1.0.0
+     */
+    public function dequeue_chat_scripts() {
+        global $wp_scripts;
+        
+        if (!is_object($wp_scripts) || empty($wp_scripts->registered)) {
+            return;
+        }
+        
+        // List of script handles or partial matches to dequeue
+        $chat_scripts = array(
+            'chat', 'crisp', 'intercom', 'zendesk', 'zopim', 'livechat', 'tawkto', 'tawk',
+            'hubspot', 'tidio', 'drift', 'freshchat', 'freshdesk', 'smallchat', 'messaging',
+            'messenger', 'fb-customer-chat', 'facebook-messenger'
+        );
+        
+        // List of script URLs or partial matches to dequeue
+        $chat_urls = array(
+            'chat', 'crisp.chat', 'intercom.io', 'zendesk.com', 'zopim.com', 'livechatinc.com',
+            'tawk.to', 'hubspot.com', 'tidio.co', 'drift.com', 'freshchat', 'freshdesk',
+            'smallchat', 'messenger', 'connect.facebook.net'
+        );
+        
+        foreach ($wp_scripts->registered as $handle => $script) {
+            // Check script handle against our list
+            foreach ($chat_scripts as $chat_script) {
+                if (stripos($handle, $chat_script) !== false) {
+                    wp_dequeue_script($handle);
+                    wp_deregister_script($handle);
+                    continue 2; // Skip to next registered script
+                }
+            }
+            
+            // Check script source URL against our list
+            if (isset($script->src)) {
+                foreach ($chat_urls as $chat_url) {
+                    if (stripos($script->src, $chat_url) !== false) {
+                        wp_dequeue_script($handle);
+                        wp_deregister_script($handle);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Dequeue styles that might be related to chat widgets
+     * 
+     * @since    1.0.0
+     */
+    public function dequeue_chat_styles() {
+        global $wp_styles;
+        
+        if (!is_object($wp_styles) || empty($wp_styles->registered)) {
+            return;
+        }
+        
+        // List of style handles or partial matches to dequeue
+        $chat_styles = array(
+            'chat', 'crisp', 'intercom', 'zendesk', 'zopim', 'livechat', 'tawkto', 'tawk',
+            'hubspot', 'tidio', 'drift', 'freshchat', 'freshdesk', 'smallchat', 'messaging',
+            'messenger', 'fb-customer-chat', 'facebook-messenger'
+        );
+        
+        foreach ($wp_styles->registered as $handle => $style) {
+            // Check style handle against our list
+            foreach ($chat_styles as $chat_style) {
+                if (stripos($handle, $chat_style) !== false) {
+                    wp_dequeue_style($handle);
+                    wp_deregister_style($handle);
+                    break;
+                }
+            }
+        }
+    }
 
     /**
      * Check if the user needs to be prompted for a password.
@@ -350,6 +434,41 @@ class PassPro_Public {
         // --- VERY Aggressive Background Style ---
         $bg_color = ! empty( $options['passpro_background_color'] ) ? $options['passpro_background_color'] : '#f1f1f1';
         $css .= "html, body, body.login, body.login-passpro { background-color: " . esc_attr($bg_color) . " !important; }\n";
+
+        // --- Hide Chat Widgets and Floating Elements ---
+        $css .= "/* Hide chat widgets and floating elements on the password page */\n";
+        $css .= "body.login-passpro .crisp-client, "; // Crisp chat
+        $css .= "body.login-passpro #intercom-container, "; // Intercom chat
+        $css .= "body.login-passpro .olark-chat-wrapper, "; // Olark chat
+        $css .= "body.login-passpro .fb_dialog, "; // Facebook Messenger
+        $css .= "body.login-passpro .fb-customerchat, "; // Facebook Customer Chat
+        $css .= "body.login-passpro .drift-frame-controller, "; // Drift chat
+        $css .= "body.login-passpro .drift-conductor-item, "; // Drift chat elements
+        $css .= "body.login-passpro [class*='livechat'], "; // LiveChat
+        $css .= "body.login-passpro [class*='chat-widget'], "; // Generic chat widgets
+        $css .= "body.login-passpro [class*='chat-bubble'], "; // Generic chat bubbles
+        $css .= "body.login-passpro [class*='chat-icon'], "; // Generic chat icons
+        $css .= "body.login-passpro [class*='chat-button'], "; // Generic chat buttons
+        $css .= "body.login-passpro [class*='tawkto'], "; // Tawk.to chat
+        $css .= "body.login-passpro [id*='chat-widget'], "; // Generic chat widgets by ID
+        $css .= "body.login-passpro [id*='chat-bubble'], "; // Generic chat bubbles by ID
+        $css .= "body.login-passpro [id*='livechat'], "; // LiveChat by ID
+        $css .= "body.login-passpro [id*='tawkto'], "; // Tawk.to by ID
+        $css .= "body.login-passpro [id*='intercom'], "; // Intercom by ID
+        $css .= "body.login-passpro [id*='crisp'], "; // Crisp by ID
+        $css .= "body.login-passpro [id*='drift'], "; // Drift by ID
+        $css .= "body.login-passpro .tidio-chat-wrapper, "; // Tidio chat
+        $css .= "body.login-passpro #tidio-chat, "; // Tidio chat
+        $css .= "body.login-passpro [id*='zopim'], "; // Zendesk chat (formerly Zopim)
+        $css .= "body.login-passpro .zopim, "; // Zendesk chat
+        $css .= "body.login-passpro .wc-bubble, "; // Various WooCommerce chat bubbles
+        $css .= "body.login-passpro .wc-chat, "; // Various WooCommerce chat
+        $css .= "body.login-passpro div[class*='helpdesk'], "; // Various help desk widgets
+        $css .= "body.login-passpro div[class*='support-chat'], "; // Various support chat widgets
+        $css .= "body.login-passpro div[role='dialog'][aria-label*='chat'], "; // ARIA labeled chat dialogs
+        $css .= "body.login-passpro div[class*='floating'], "; // Generic floating elements
+        $css .= "body.login-passpro .fixed-chat-button "; // Fixed position chat buttons
+        $css .= "{ display: none !important; visibility: hidden !important; opacity: 0 !important; }\n";
 
         // --- Logo --- (.passpro-logo img)
         if ( ! empty( $options['passpro_logo_max_width'] ) || ! empty( $options['passpro_logo_max_height'] ) || ! empty( $options['passpro_logo_alignment'] ) ) {

@@ -36,15 +36,236 @@ $logo_url = ! empty( $passpro_options['passpro_logo_url'] ) ? $passpro_options['
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo( 'charset' ); ?>" />
 	<meta name="viewport" content="width=device-width">
 	<title><?php echo esc_html( $page_title ); ?></title>
-	<?php 
-    /**
-     * Fires in the login page header after scripts are enqueued.
-     * Includes print_styles, print_scripts, etc.
-     * Our custom styles are output via the 'login_head' action.
-     */
-    wp_head(); 
-    ?>
-	<?php /* Inline styles removed - now handled by login_head action */ ?>
+	
+	<?php
+	// Instead of wp_head() which loads all scripts, just add the essentials
+	$custom_css_handle = 'passpro-public';
+	wp_enqueue_style($custom_css_handle, PASSPRO_PLUGIN_URL . 'public/css/passpro-public.css', array(), PASSPRO_VERSION);
+	
+	// Output just the dashicons if needed
+	wp_enqueue_style('dashicons');
+	
+	// Print only the styles we've enqueued
+	wp_print_styles(array($custom_css_handle, 'dashicons'));
+	
+	// Allow custom login styles to be output via the custom output_custom_login_styles function
+	do_action('login_head');
+	?>
+	
+	<!-- Prevent loading of all third-party scripts and resources -->
+	<script type="text/javascript">
+	// Block all script loading via fetch, XMLHttpRequest, and script tags
+	(function() {
+		// Save original fetch
+		const originalFetch = window.fetch;
+		// Override fetch
+		window.fetch = function(resource, init) {
+			const url = resource instanceof Request ? resource.url : resource;
+			// Allow only our own resources
+			if (url.indexOf('<?php echo esc_js(site_url()); ?>') === 0 && 
+				url.indexOf('chat') === -1 && 
+				url.indexOf('messaging') === -1) {
+				return originalFetch.apply(this, arguments);
+			}
+			console.log('PassPro: Blocked fetch request to', url);
+			return Promise.resolve(new Response('', {status: 200}));
+		};
+		
+		// Save original XMLHttpRequest
+		const originalXHR = window.XMLHttpRequest;
+		// Override XMLHttpRequest
+		window.XMLHttpRequest = function() {
+			const xhr = new originalXHR();
+			const originalOpen = xhr.open;
+			
+			xhr.open = function(method, url, ...args) {
+				// Allow only our own resources
+				if (url.indexOf('<?php echo esc_js(site_url()); ?>') === 0 && 
+					url.indexOf('chat') === -1 && 
+					url.indexOf('messaging') === -1) {
+					return originalOpen.call(this, method, url, ...args);
+				}
+				console.log('PassPro: Blocked XHR request to', url);
+				// Call but modify to a non-existent URL to prevent actual network request
+				return originalOpen.call(this, method, 'about:blank', ...args);
+			};
+			
+			return xhr;
+		};
+		
+		// Block script elements from being added to the page
+		const originalCreateElement = document.createElement;
+		document.createElement = function(tagName, ...args) {
+			const element = originalCreateElement.call(document, tagName, ...args);
+			
+			if (tagName.toLowerCase() === 'script') {
+				// Override the src setter to block external scripts
+				let originalSrc = '';
+				Object.defineProperty(element, 'src', {
+					get: function() { return originalSrc; },
+					set: function(value) {
+						if (value && value.indexOf('<?php echo esc_js(site_url()); ?>') === 0 && 
+							value.indexOf('chat') === -1 && 
+							value.indexOf('messaging') === -1) {
+							originalSrc = value;
+						} else {
+							console.log('PassPro: Blocked script src', value);
+							originalSrc = 'about:blank';
+						}
+					},
+					enumerable: true,
+					configurable: true
+				});
+			}
+			
+			return element;
+		};
+	})();
+	
+	// Add aggressive widget blocker that detects and removes chat widgets
+	(function() {
+		// Create list of selectors that commonly identify chat widgets
+		const chatSelectors = [
+			// Class based selectors
+			'.crisp-client',
+			'#intercom-container',
+			'.olark-chat-wrapper',
+			'.fb_dialog',
+			'.fb-customerchat',
+			'.drift-frame-controller',
+			'.drift-conductor-item',
+			'[class*="livechat"]',
+			'[class*="chat-widget"]',
+			'[class*="chat-bubble"]',
+			'[class*="chat-icon"]',
+			'[class*="chat-button"]',
+			'[class*="tawkto"]',
+			'[id*="chat-widget"]',
+			'[id*="chat-bubble"]',
+			'[id*="livechat"]',
+			'[id*="tawkto"]',
+			'[id*="intercom"]',
+			'[id*="crisp"]',
+			'[id*="drift"]',
+			'.tidio-chat-wrapper',
+			'#tidio-chat',
+			'[id*="zopim"]',
+			'.zopim',
+			'.wc-bubble',
+			'.wc-chat',
+			'div[class*="helpdesk"]',
+			'div[class*="support-chat"]',
+			'div[role="dialog"][aria-label*="chat"]',
+			'div[class*="floating"]',
+			'.fixed-chat-button',
+			// Add common IDs for various chat plugins
+			'#chat-application',
+			'#chat-wrapper',
+			'#chat-container',
+			'#hubspot-messages-iframe-container',
+			'#freshworks-container',
+			'#Smallchat',
+			'#chat-widget-container',
+			// iFrames are often used for chat widgets
+			'iframe[src*="chat"]',
+			'iframe[src*="messaging"]',
+			'iframe[src*="support"]',
+			'iframe[src*="intercom"]',
+			'iframe[src*="crisp"]',
+			'iframe[src*="tawk"]',
+			'iframe[src*="zendesk"]',
+			'iframe[src*="zopim"]',
+			'iframe[src*="livechat"]'
+		];
+
+		// Function to remove chat widgets
+		function removeChatWidgets() {
+			chatSelectors.forEach(selector => {
+				const elements = document.querySelectorAll(selector);
+				elements.forEach(el => {
+					console.log('PassPro: Removing chat widget:', el);
+					el.style.display = 'none';
+					el.style.visibility = 'hidden';
+					el.style.opacity = '0';
+					el.style.pointerEvents = 'none';
+					// Optionally remove from DOM completely
+					if (el.parentNode) {
+						el.parentNode.removeChild(el);
+					}
+				});
+			});
+		}
+
+		// Run immediately when DOM is ready
+		document.addEventListener('DOMContentLoaded', function() {
+			console.log('PassPro: Initial chat widget removal');
+			removeChatWidgets();
+			
+			// Also run on window load to catch late-loading widgets
+			window.addEventListener('load', function() {
+				console.log('PassPro: Window loaded, removing chat widgets');
+				removeChatWidgets();
+				
+				// Set interval to keep checking for chat widgets
+				setInterval(removeChatWidgets, 1000);
+			});
+		});
+
+		// Create a MutationObserver to watch for changes to the DOM
+		const observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+					console.log('PassPro: DOM changed, checking for chat widgets');
+					removeChatWidgets();
+				}
+			});
+		});
+
+		// Start observing the document with the configured parameters
+		document.addEventListener('DOMContentLoaded', function() {
+			observer.observe(document.body, { childList: true, subtree: true });
+		});
+
+		// Check at key user interaction points
+		document.addEventListener('click', function() {
+			setTimeout(removeChatWidgets, 500);
+		});
+
+		// Block common chat widget initialization functions
+		function blockChatScripts() {
+			// List of common chat widget global objects/functions
+			const chatGlobals = [
+				'Intercom', 'tawk', 'tawkTo', 'Tawk_API', 'zE', 'zEmbed', 
+				'$zopim', 'Zendesk', 'LiveChatWidget', 'Crisp', 'CRISP_WEBSITE_ID',
+				'tiledeskSettings', 'TILEDESK_WIDGET_URL', 'HubSpotConversations',
+				'drift', 'driftt', 'DRIFT_CHAT_WIDGET', 'Beacon', 'ZohoSalesIQ',
+				'FreshworksWidget', 'fcWidget', 'SmallChat'
+			];
+
+			chatGlobals.forEach(global => {
+				try {
+					// Try to override the global object/function if it exists
+					if (window[global]) {
+						console.log('PassPro: Blocking chat widget script:', global);
+						window[global] = undefined;
+						Object.defineProperty(window, global, {
+							get: function() { return undefined; },
+							set: function() {},
+							configurable: false
+						});
+					}
+				} catch (e) {
+					console.log('PassPro: Error blocking chat script:', e);
+				}
+			});
+		}
+
+		// Run the blocking function
+		blockChatScripts();
+		document.addEventListener('DOMContentLoaded', blockChatScripts);
+		window.addEventListener('load', blockChatScripts);
+	})();
+	</script>
 </head>
 <body class="login login-passpro wp-core-ui">
 	<div id="login">
@@ -101,10 +322,9 @@ $logo_url = ! empty( $passpro_options['passpro_logo_url'] ) ? $passpro_options['
         ?>
 	</div>
     <?php 
-    /**
-     * Fires in the login page footer.
-     */
-    wp_footer(); 
+    // Don't use wp_footer() as it will load unnecessary scripts
+    // Instead, just output necessary login scripts if any
+    do_action('login_footer');
     ?>
 </body>
 </html> 
