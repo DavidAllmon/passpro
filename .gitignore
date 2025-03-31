@@ -32,3 +32,5 @@ wp-config.php
 *.tmp
 *.bak
 *.swp 
+
+VERSION-UPDATE-STEPS.md

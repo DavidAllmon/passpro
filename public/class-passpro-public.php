@@ -708,6 +708,13 @@ class PassPro_Public {
             // Button dimension properties
             if ( ! empty( $options['passpro_button_width'] ) ) {
                 $css .= "width: " . esc_attr($options['passpro_button_width']) . " !important; ";
+                
+                // Add specific styling for better positioning when width is set
+                if ( ! empty( $options['passpro_button_alignment'] ) && $options['passpro_button_alignment'] === 'center' ) {
+                    $css .= "display: block !important; ";
+                    $css .= "margin-left: auto !important; ";
+                    $css .= "margin-right: auto !important; ";
+                }
             }
             if ( ! empty( $options['passpro_button_height'] ) ) {
                 $css .= "height: " . esc_attr($options['passpro_button_height']) . " !important; ";
@@ -715,6 +722,7 @@ class PassPro_Public {
                 $css .= "display: flex !important; ";
                 $css .= "align-items: center !important; ";
                 $css .= "justify-content: center !important; ";
+                $css .= "line-height: normal !important; "; // Override default line-height
             } else {
                 // For auto height, use more standard button styling
                 $css .= "line-height: 1.5 !important; ";
@@ -802,6 +810,27 @@ class PassPro_Public {
             }
             
             $css .= "}\n";
+            
+            // Also add the same styles for focus state (for keyboard accessibility)
+            $css .= "body.login-passpro #loginform #wp-submit:focus, #loginform #wp-submit:focus { ";
+            
+            if ( ! empty( $options['passpro_button_hover_bg_color'] ) ) {
+                $css .= "background-color: " . esc_attr($options['passpro_button_hover_bg_color']) . " !important; ";
+            } else if ( ! empty( $options['passpro_button_bg_color'] ) ) {
+                // Fall back to darkening the regular background color
+                $css .= "background-color: " . esc_attr($options['passpro_button_bg_color']) . " !important; ";
+                $css .= "filter: brightness(90%) !important; ";
+            }
+            
+            if ( ! empty( $options['passpro_button_hover_text_color'] ) ) {
+                $css .= "color: " . esc_attr($options['passpro_button_hover_text_color']) . " !important; ";
+            }
+            
+            // Add focus outline for better keyboard accessibility
+            $css .= "outline: 2px solid " . (! empty( $options['passpro_button_hover_bg_color'] ) ? esc_attr($options['passpro_button_hover_bg_color']) : (! empty( $options['passpro_button_bg_color'] ) ? esc_attr($options['passpro_button_bg_color']) : '#2271b1')) . " !important; ";
+            $css .= "outline-offset: 2px !important; ";
+            
+            $css .= "}\n";
 
             // Add alignment for button's container (p.submit)
             if ( ! empty( $options['passpro_button_alignment'] ) ) {
@@ -821,6 +850,10 @@ class PassPro_Public {
                         $css .= "float: none !important; ";
                         $css .= "margin-left: auto !important; ";
                         $css .= "margin-right: auto !important; ";
+                        // Add more reliable centering
+                        $css .= "position: relative !important; ";
+                        $css .= "left: 50% !important; ";
+                        $css .= "transform: translateX(-50%) !important; ";
                         $css .= "}\n";
                     } else {
                         // If width is set, we directly center the button
@@ -851,7 +884,44 @@ class PassPro_Public {
 
         // Add global CSS for form spacing and balance - independent of user settings
         $css .= "body.login-passpro #loginform, #loginform { padding: 26px 24px 26px !important; box-sizing: border-box !important; }\n";
-        $css .= "body.login-passpro #loginform p.submit, #loginform p.submit { margin-bottom: 0 !important; padding-bottom: 0 !important; margin-top: 16px !important; }\n";
+        
+        // Improved button container styling with better spacing
+        $css .= "body.login-passpro #loginform p.submit, #loginform p.submit { 
+            margin-bottom: 0 !important; 
+            padding-bottom: 0 !important; 
+            margin-top: 24px !important; 
+            clear: both !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+        }\n";
+        
+        // Improved button styling for more consistent appearance
+        $css .= "body.login-passpro #loginform #wp-submit, #loginform #wp-submit { 
+            min-height: 36px !important;
+            line-height: 2.15384615 !important;
+            display: inline-block !important;
+            text-decoration: none !important;
+            cursor: pointer !important;
+            border-style: solid !important;
+            -webkit-appearance: none !important;
+            box-sizing: border-box !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }\n";
+        
+        // Apply default padding only if custom padding is not set
+        if (empty($options['passpro_button_padding_top']) && 
+            empty($options['passpro_button_padding_right']) && 
+            empty($options['passpro_button_padding_bottom']) && 
+            empty($options['passpro_button_padding_left'])) {
+            $css .= "body.login-passpro #loginform #wp-submit, #loginform #wp-submit { 
+                padding: 4px 16px !important;
+            }\n";
+        }
+        
         $css .= "body.login-passpro #loginform .input, #loginform .input { margin-top: 2px !important; margin-bottom: 12px !important; }\n";
         $css .= "body.login-passpro #loginform label, #loginform label { margin-bottom: 0 !important; display: block !important; padding-bottom: 3px !important; }\n";
         $css .= "body.login-passpro #loginform p, #loginform p { margin-top: 0 !important; margin-bottom: 16px !important; }\n";
@@ -924,6 +994,38 @@ class PassPro_Public {
             
             // Start the style tag
             echo "<style type=\"text/css\" id=\"passpro-custom-styles\">\n" . $css . "</style>\n";
+            
+            // Add Button Hover JS if hover colors are set
+            if (!empty($options['passpro_button_hover_bg_color']) || !empty($options['passpro_button_hover_text_color'])) {
+                $hover_bg = !empty($options['passpro_button_hover_bg_color']) ? esc_js($options['passpro_button_hover_bg_color']) : '';
+                $hover_text = !empty($options['passpro_button_hover_text_color']) ? esc_js($options['passpro_button_hover_text_color']) : '';
+                $normal_bg = !empty($options['passpro_button_bg_color']) ? esc_js($options['passpro_button_bg_color']) : '#2271b1';
+                $normal_text = !empty($options['passpro_button_text_color']) ? esc_js($options['passpro_button_text_color']) : '#ffffff';
+                
+                echo "<script type=\"text/javascript\">
+                document.addEventListener('DOMContentLoaded', function() {
+                    var submitButton = document.getElementById('wp-submit');
+                    if (submitButton) {
+                        // Store original colors
+                        var originalBg = '{$normal_bg}';
+                        var originalText = '{$normal_text}';
+                        var hoverBg = " . ($hover_bg ? "'{$hover_bg}'" : 'originalBg') . ";
+                        var hoverText = " . ($hover_text ? "'{$hover_text}'" : 'originalText') . ";
+                        
+                        // Add hover effect
+                        submitButton.addEventListener('mouseenter', function() {
+                            this.style.backgroundColor = hoverBg;
+                            this.style.color = hoverText;
+                        });
+                        
+                        submitButton.addEventListener('mouseleave', function() {
+                            this.style.backgroundColor = originalBg;
+                            this.style.color = originalText;
+                        });
+                    }
+                });
+                </script>\n";
+            }
             
             // Add JavaScript for logo alignment if needed
             if ( ! empty( $options['passpro_logo_alignment'] ) ) {

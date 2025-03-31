@@ -148,7 +148,15 @@ class PassPro_Admin {
         // Enqueue scripts
         wp_enqueue_media(); // For the media uploader
         wp_enqueue_script( 'wp-color-picker' );
-        wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/passpro-admin.js', array( 'jquery', 'wp-color-picker' ), $this->version, true ); // Load in footer
+        
+        // Enqueue the admin settings JavaScript
+        wp_enqueue_script( 
+            $this->plugin_name, 
+            plugin_dir_url( __FILE__ ) . 'js/passpro-admin-display.js', 
+            array( 'jquery', 'wp-color-picker' ), 
+            $this->version, 
+            true 
+        );
     }
 
 	/**
@@ -952,11 +960,26 @@ class PassPro_Admin {
     public function render_enabled_field() {
         $options = get_option( $this->option_name );
         $enabled = isset( $options['passpro_enabled'] ) ? $options['passpro_enabled'] : 0;
+
+        // Note: Removed the jQuery/CSS hack to hide the table header 'th'
         ?>
-        <label for="passpro_enabled">
-            <input type="checkbox" id="passpro_enabled" name="<?php echo esc_attr( $this->option_name ); ?>[passpro_enabled]" value="1" <?php checked( $enabled, 1 ); ?> />
-            <?php esc_html_e( 'Check this box to enable site-wide password protection.', 'passpro' ); ?>
-        </label>
+        <div class="passpro-setting-card passpro-enable-disable-card">
+            <div class="passpro-setting-card-content">
+                <div class="passpro-setting-card-header">
+                     <label class="passpro-toggle-switch" for="passpro_enabled">
+                         <input type="checkbox" id="passpro_enabled" name="<?php echo esc_attr( $this->option_name ); ?>[passpro_enabled]" value="1" <?php checked( $enabled, 1 ); ?> />
+                         <span class="passpro-toggle-slider"></span>
+                     </label>
+                     <span class="passpro-setting-card-title"><?php esc_html_e( 'Enable Protection', 'passpro' ); ?></span>
+                </div>
+                <p class="passpro-setting-card-description">
+                    <?php esc_html_e( 'Toggle to enable site-wide password protection. When enabled, visitors will need to enter a password before accessing your site.', 'passpro' ); ?>
+                </p>
+            </div>
+            <div class="passpro-setting-card-icon">
+                 <span class="dashicons <?php echo $enabled ? 'dashicons-lock' : 'dashicons-unlock'; ?>"></span>
+            </div>
+        </div>
         <?php
     }
 
@@ -967,9 +990,29 @@ class PassPro_Admin {
      */
     public function render_password_field() {
         // Don't retrieve the actual password to display in the field for security.
+        $options = get_option( $this->option_name );
+        $has_password = !empty( $options['passpro_password'] );
         ?>
-        <input type="password" id="passpro_password" name="<?php echo esc_attr( $this->option_name ); ?>[passpro_password]" value="" class="regular-text" placeholder="<?php esc_attr_e( 'Enter new password or leave blank', 'passpro' ); ?>" />
-        <p class="description"><?php esc_html_e( 'Enter the password required to access the site. Leave blank to keep the current password.', 'passpro' ); ?></p>
+        <div class="passpro-setting-card passpro-password-card">
+             <div class="passpro-setting-card-content">
+                <div class="passpro-setting-card-header">
+                     <span class="passpro-setting-card-title"><?php esc_html_e( 'Password', 'passpro' ); ?></span>
+                </div>
+                <div class="passpro-password-input-wrapper">
+                    <input type="password" id="passpro_password" name="<?php echo esc_attr( $this->option_name ); ?>[passpro_password]" value="" class="regular-text passpro-password-input" placeholder="<?php esc_attr_e( 'Enter new password or leave blank', 'passpro' ); ?>" />
+                    <button type="button" class="button button-secondary passpro-password-toggle"><span class="dashicons dashicons-visibility"></span></button>
+                </div>
+                 <p class="passpro-setting-card-description">
+                    <?php if ( $has_password ): ?>
+                         <span class="passpro-current-password-status"><?php esc_html_e( 'Password is currently set.', 'passpro' ); ?></span><br>
+                    <?php endif; ?>
+                    <?php esc_html_e( 'Enter the password required to access the site. Leave blank to keep the current password.', 'passpro' ); ?>
+                 </p>
+            </div>
+             <div class="passpro-setting-card-icon">
+                <span class="dashicons dashicons-key"></span>
+            </div>
+        </div>
         <?php
     }
 
@@ -981,9 +1024,25 @@ class PassPro_Admin {
     public function render_allowed_ips_field() {
         $options = get_option( $this->option_name );
         $allowed_ips = isset( $options['passpro_allowed_ips'] ) ? $options['passpro_allowed_ips'] : '';
+        $has_ips = !empty( $allowed_ips );
         ?>
-        <textarea id="passpro_allowed_ips" name="<?php echo esc_attr( $this->option_name ); ?>[passpro_allowed_ips]" rows="5" cols="50" class="large-text code"><?php echo esc_textarea( $allowed_ips ); ?></textarea>
-        <p class="description"><?php esc_html_e( 'Enter one IP address per line. Users from these IPs will bypass password protection.', 'passpro' ); ?></p>
+        <div class="passpro-setting-card passpro-ip-card">
+            <div class="passpro-setting-card-content">
+                <div class="passpro-setting-card-header">
+                     <span class="passpro-setting-card-title"><?php esc_html_e( 'Allowed IP Addresses', 'passpro' ); ?></span>
+                </div>
+                <textarea id="passpro_allowed_ips" name="<?php echo esc_attr( $this->option_name ); ?>[passpro_allowed_ips]" rows="5" cols="50" class="large-text code passpro-ip-textarea" placeholder="<?php esc_attr_e( 'e.g., 192.168.1.1', 'passpro' ); ?>"><?php echo esc_textarea( $allowed_ips ); ?></textarea>
+                 <p class="passpro-setting-card-description">
+                     <?php if ( $has_ips ): ?>
+                         <span class="passpro-current-ip-status"><?php esc_html_e( 'IP whitelist is active.', 'passpro' ); ?></span><br>
+                     <?php endif; ?>
+                     <?php esc_html_e( 'Enter one IP address per line. Users from these IPs will bypass password protection.', 'passpro' ); ?>
+                 </p>
+            </div>
+             <div class="passpro-setting-card-icon">
+                <span class="dashicons dashicons-networking"></span>
+            </div>
+        </div>
         <?php
     }
 

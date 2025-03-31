@@ -46,19 +46,33 @@
 
     // --- Document Ready --- 
     $(function() { 
-        // Simple standard color picker initialization - with a small delay to ensure DOM is ready
-        setTimeout(function() {
-            $('.passpro-color-picker').wpColorPicker();
+        // Password visibility toggle
+        $('.passpro-password-toggle').on('click', function(e) {
+            e.preventDefault();
             
-            // Extra handling for the appearance tab - direct targeting of critical fields
-            $('#passpro_background_color').wpColorPicker();
+            var passwordField = $(this).parent().find('input');
+            var icon = $(this).find('.dashicons');
             
-            // Initialize color pickers in active tab specifically
-            var activeTabId = $('#passpro-settings-tabs-nav a.nav-tab-active').attr('href');
-            if (activeTabId) {
-                $(activeTabId + ' .passpro-color-picker').wpColorPicker();
+            if (passwordField.attr('type') === 'password') {
+                passwordField.attr('type', 'text');
+                icon.removeClass('dashicons-visibility').addClass('dashicons-hidden');
+            } else {
+                passwordField.attr('type', 'password');
+                icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
             }
-        }, 100);
+        });
+
+        // Protection toggle icon update
+        $('#passpro_enabled').on('change', function() {
+            var isChecked = $(this).is(':checked');
+            var iconElement = $('.passpro-protection-icon .dashicons');
+            
+            if (isChecked) {
+                iconElement.removeClass('dashicons-unlock').addClass('dashicons-lock');
+            } else {
+                iconElement.removeClass('dashicons-lock').addClass('dashicons-unlock');
+            }
+        });
 
         // Initialize Settings Tabs (if elements exist)
         var tabsNav = $('#passpro-settings-tabs-nav');
@@ -130,18 +144,13 @@
             var previewForm = $('<div class="preview-form"></div>');
             var previewLabel = $('<label class="preview-label">Password</label>');
             var previewInput = $('<input type="password" class="preview-input" value="password123" />');
-            var buttonContainer = $('<div class="preview-button-container"></div>');
-            var previewButton = $('<button type="button" class="preview-button">Enter</button>');
+            var buttonContainer = $('<div class="preview-button-container" id="button-container"></div>');
+            var previewButton = $('<button type="button" class="preview-button" id="button-preview">Enter</button>');
             
             buttonContainer.append(previewButton);
             previewForm.append(previewLabel).append(previewInput).append(buttonContainer);
             previewContainer.append(previewTitle).append(previewForm);
-            buttonTab.prepend(previewContainer);
-            
-            // Initialize button with proper text on load
-            var initialButtonText = $('#passpro_button_text_label').val() || 'Enter'; 
-            previewButton.text(initialButtonText);
-            
+
             // Initial styling
             updateFormPreview();
             
@@ -153,19 +162,18 @@
             // Special handling for the button text label to ensure it updates immediately
             $('#passpro_button_text_label').on('change input keyup', function() {
                 var buttonText = $(this).val() || 'Enter';
-                previewButton.text(buttonText);
-            });
-            
-            // Color picker specific handling - use the simple method
-            buttonTab.find('.passpro-color-picker').wpColorPicker({
-                change: function() {
-                    // Need a slight delay for the color picker to update
-                    setTimeout(updateFormPreview, 100); 
+                if (previewButton) {
+                    previewButton.text(buttonText);
                 }
             });
             
             // Function to update the preview based on current settings
             function updateFormPreview() {
+                // Skip if button preview was removed
+                if (!previewButton.length) {
+                    return;
+                }
+                
                 // Get all the button settings
                 var backgroundColor = $('#passpro_button_bg_color').val() || '#0073aa';
                 var textColor = $('#passpro_button_text_color').val() || '#ffffff';
@@ -196,19 +204,26 @@
                 var inputFontSize = $('#passpro_input_font_size').val() || '24';
                 var inputPadding = $('#passpro_input_padding').val() || '3';
                 
-                // Style the input field
-                previewInput.css({
-                    'background-color': inputBgColor,
-                    'color': inputTextColor,
-                    'border': inputBorderWidth + 'px solid ' + inputBorderColor,
-                    'border-radius': inputBorderRadius + 'px',
-                    'font-size': inputFontSize + 'px',
-                    'padding': inputPadding + 'px',
-                    'width': '100%',
-                    'box-sizing': 'border-box',
-                    'margin': '0 0 15px 0',
-                    'display': 'block'
-                });
+                // Style the input field if it exists
+                if (previewInput.length) {
+                    previewInput.css({
+                        'background-color': inputBgColor,
+                        'color': inputTextColor,
+                        'border': inputBorderWidth + 'px solid ' + inputBorderColor,
+                        'border-radius': inputBorderRadius + 'px',
+                        'font-size': inputFontSize + 'px',
+                        'padding': inputPadding + 'px',
+                        'width': '100%',
+                        'box-sizing': 'border-box',
+                        'margin': '0 0 15px 0',
+                        'display': 'block'
+                    });
+                }
+                
+                // Skip further button styling if elements don't exist
+                if (!previewButton.length) {
+                    return;
+                }
                 
                 // Add focus styles for the input field
                 $('.preview-input-focus-style').remove();
@@ -230,82 +245,33 @@
                     case 'medium':
                         shadowValue = '0 4px 8px rgba(0,0,0,0.15)';
                         break;
-                    case 'strong':
+                    case 'heavy':
                         shadowValue = '0 6px 12px rgba(0,0,0,0.2)';
                         break;
+                    default:
+                        shadowValue = 'none';
                 }
                 
                 // Calculate transition value
-                var transitionValue = 'all 0.2s ease';
+                var transitionValue = 'all 0.3s ease';
                 switch(transition) {
-                    case 'none':
-                        transitionValue = 'none';
-                        break;
                     case 'fast':
                         transitionValue = 'all 0.1s ease';
                         break;
-                    case 'normal':
-                        transitionValue = 'all 0.2s ease';
-                        break;
                     case 'slow':
-                        transitionValue = 'all 0.4s ease';
+                        transitionValue = 'all 0.5s ease';
                         break;
+                    case 'none':
+                        transitionValue = 'none';
+                        break;
+                    default:
+                        transitionValue = 'all 0.3s ease'; // normal
                 }
                 
-                // Set button alignment
-                if (buttonAlignment) {
-                    // Apply text-align to the button container
-                    $('.preview-button-container').css({
-                        'text-align': buttonAlignment,
-                        'display': 'block',
-                        'width': '100%'
-                    });
-                    
-                    // Match the same special handling we do in PHP for the frontend
-                    if (buttonAlignment === 'center') {
-                        if (buttonWidth === 'auto' || !buttonWidth) {
-                            previewButton.css({
-                                'display': 'inline-block',
-                                'float': 'none',
-                                'margin-left': 'auto',
-                                'margin-right': 'auto'
-                            });
-                        } else {
-                            previewButton.css({
-                                'display': 'block',
-                                'float': 'none',
-                                'margin-left': 'auto',
-                                'margin-right': 'auto'
-                            });
-                        }
-                    } else if (buttonAlignment === 'right') {
-                        previewButton.css({
-                            'float': 'right',
-                            'margin-left': 'auto',
-                            'margin-right': '0'
-                        });
-                    } else if (buttonAlignment === 'left') {
-                        previewButton.css({
-                            'float': 'left',
-                            'margin-left': '0',
-                            'margin-right': 'auto'
-                        });
-                    }
-                } else {
-                    // Default to left alignment if not specified
-                    $('.preview-button-container').css({
-                        'text-align': 'left',
-                        'display': 'block',
-                        'width': '100%'
-                    });
-                    previewButton.css({
-                        'float': 'left',
-                        'margin-left': '0',
-                        'margin-right': 'auto'
-                    });
-                }
+                // Calculate padding
+                var padding = paddingTop + 'px ' + paddingRight + 'px ' + paddingBottom + 'px ' + paddingLeft + 'px';
                 
-                // Apply all styles to the preview button
+                // Apply button styles
                 previewButton.css({
                     'background-color': backgroundColor,
                     'color': textColor,
@@ -314,52 +280,34 @@
                     'font-size': fontSize + 'px',
                     'font-weight': fontWeight,
                     'text-transform': textTransform,
-                    'padding': paddingTop + 'px ' + paddingRight + 'px ' + paddingBottom + 'px ' + paddingLeft + 'px',
+                    'width': buttonWidth,
+                    'height': buttonHeight,
+                    'padding': padding,
                     'box-shadow': shadowValue,
                     'transition': transitionValue,
-                    'cursor': 'pointer'
+                    'cursor': 'pointer',
+                    'text-align': 'center',
+                    'min-width': '100px'
                 });
                 
-                // Apply width and height only if they're set
-                if (buttonWidth && buttonWidth !== 'auto') {
-                    previewButton.css('width', buttonWidth);
-                } else {
-                    previewButton.css('width', 'auto');
+                // Handle button alignment
+                if (buttonContainer.length) {
+                    switch(buttonAlignment) {
+                        case 'left':
+                            buttonContainer.css('text-align', 'left');
+                            break;
+                        case 'center':
+                            buttonContainer.css('text-align', 'center');
+                            break;
+                        case 'right':
+                            buttonContainer.css('text-align', 'right');
+                            break;
+                        default:
+                            buttonContainer.css('text-align', 'left');
+                    }
                 }
                 
-                if (buttonHeight && buttonHeight !== 'auto') {
-                    previewButton.css({
-                        'height': buttonHeight,
-                        'display': 'flex',
-                        'align-items': 'center',
-                        'justify-content': 'center'
-                    });
-                } else {
-                    previewButton.css({
-                        'height': 'auto',
-                        'line-height': '1.5',
-                        'display': 'inline-block'
-                    });
-                }
-                
-                // Add hover effects
-                var hoverBgColor = $('#passpro_button_hover_bg_color').val() || '#0062a3';
-                var hoverTextColor = $('#passpro_button_hover_text_color').val() || '#ffffff';
-                
-                // Remove any existing hover style
-                $('#button-preview-hover-style').remove();
-                
-                // Add hover style
-                $('<style id="button-preview-hover-style">' +
-                    '.preview-button:hover {' +
-                    '  background-color: ' + hoverBgColor + ' !important;' +
-                    '  color: ' + hoverTextColor + ' !important;' +
-                    '}' +
-                    '</style>'
-                ).appendTo('head');
-                
-                // Make sure button text is set correctly as the final step
-                // This ensures it won't be overridden by other style changes
+                // Apply button text
                 previewButton.text(buttonText);
             }
         }
@@ -439,6 +387,14 @@
                         }
                     });
                 }, 50);
+            }
+        });
+
+        // Add data attributes to settings field rows for easier targeting
+        $('.passpro-settings-wrapper tr').each(function() {
+            var inputId = $(this).find('input, select, textarea').first().attr('id');
+            if (inputId) {
+                $(this).attr('data-field', inputId);
             }
         });
 
