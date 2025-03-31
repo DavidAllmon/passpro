@@ -190,6 +190,7 @@ class PassPro_Admin {
         add_settings_field('passpro_enabled', esc_html__( 'Enable Protection', 'passpro' ), array( $this, 'render_enabled_field' ), $this->option_group, $this->plugin_name . '_general_section');
         add_settings_field('passpro_password', esc_html__( 'Password', 'passpro' ), array( $this, 'render_password_field' ), $this->option_group, $this->plugin_name . '_general_section');
         add_settings_field('passpro_allowed_ips', esc_html__( 'Allowed IP Addresses', 'passpro' ), array( $this, 'render_allowed_ips_field' ), $this->option_group, $this->plugin_name . '_general_section');
+        add_settings_field('passpro_show_logout_button', esc_html__( 'Show Logout Button', 'passpro' ), array( $this, 'render_show_logout_button_field' ), $this->option_group, $this->plugin_name . '_general_section');
 
 
         // --- Appearance Settings Section ---
@@ -287,6 +288,23 @@ class PassPro_Admin {
         add_settings_field('passpro_message_font_size', esc_html__( 'Message: Font Size (px)', 'passpro' ), array( $this, 'render_number_field' ), $this->option_group, $this->plugin_name . '_text_style_section', ['id' => 'passpro_message_font_size', 'default' => '14']);
         add_settings_field('passpro_message_font_color', esc_html__( 'Message: Color', 'passpro' ), array( $this, 'render_color_field' ), $this->option_group, $this->plugin_name . '_text_style_section', ['id' => 'passpro_message_font_color', 'default' => '#444444']);
         add_settings_field('passpro_message_font_family', esc_html__( 'Message: Font Family', 'passpro' ), array( $this, 'render_text_field' ), $this->option_group, $this->plugin_name . '_text_style_section', ['id' => 'passpro_message_font_family']);
+        add_settings_field(
+            'passpro_message_alignment',
+            esc_html__( 'Message: Text Alignment', 'passpro' ),
+            array( $this, 'render_select_field' ),
+            $this->option_group,
+            $this->plugin_name . '_text_style_section',
+            [
+                'id' => 'passpro_message_alignment',
+                'default' => 'left',
+                'options' => [
+                    'left' => esc_html__('Left', 'passpro'),
+                    'center' => esc_html__('Center', 'passpro'),
+                    'right' => esc_html__('Right', 'passpro')
+                ],
+                'description' => esc_html__('Align the message text.', 'passpro')
+            ]
+        );
         // Label Text
         add_settings_field('passpro_label_font_size', esc_html__( 'Label: Font Size (px)', 'passpro' ), array( $this, 'render_number_field' ), $this->option_group, $this->plugin_name . '_text_style_section', ['id' => 'passpro_label_font_size', 'default' => '14']);
         add_settings_field('passpro_label_font_color', esc_html__( 'Label: Color', 'passpro' ), array( $this, 'render_color_field' ), $this->option_group, $this->plugin_name . '_text_style_section', ['id' => 'passpro_label_font_color', 'default' => '#72777c']);
@@ -755,6 +773,7 @@ class PassPro_Admin {
         }
         
         $sanitized_input['passpro_allowed_ips'] = isset( $input['passpro_allowed_ips'] ) ? $this->sanitize_ip_list( $input['passpro_allowed_ips'] ) : '';
+        $sanitized_input['passpro_show_logout_button'] = ( isset( $input['passpro_show_logout_button'] ) && '1' === $input['passpro_show_logout_button'] ) ? 1 : 0;
 
         // Appearance Settings
         $sanitized_input['passpro_logo_url'] = isset( $input['passpro_logo_url'] ) ? esc_url_raw( $input['passpro_logo_url'] ) : '';
@@ -797,6 +816,10 @@ class PassPro_Admin {
         $sanitized_input['passpro_message_font_size'] = $this->sanitize_absint( isset($input['passpro_message_font_size']) ? $input['passpro_message_font_size'] : null );
         $sanitized_input['passpro_message_font_color'] = $this->sanitize_color( isset($input['passpro_message_font_color']) ? $input['passpro_message_font_color'] : null );
         $sanitized_input['passpro_message_font_family'] = $this->sanitize_font_family( isset($input['passpro_message_font_family']) ? $input['passpro_message_font_family'] : null );
+        $sanitized_input['passpro_message_alignment'] = $this->sanitize_select_option(
+            isset($input['passpro_message_alignment']) ? $input['passpro_message_alignment'] : null,
+            array('left', 'center', 'right')
+        );
 
         $sanitized_input['passpro_label_font_size'] = $this->sanitize_absint( isset($input['passpro_label_font_size']) ? $input['passpro_label_font_size'] : null );
         $sanitized_input['passpro_label_font_color'] = $this->sanitize_color( isset($input['passpro_label_font_color']) ? $input['passpro_label_font_color'] : null );
@@ -1531,6 +1554,35 @@ class PassPro_Admin {
         
         // Include the view template
         include_once( 'partials/passpro-admin-passwords.php' );
+    }
+
+    /**
+     * Render the 'Show Logout Button' toggle field.
+     *
+     * @since    1.0.6
+     */
+    public function render_show_logout_button_field() {
+        $options = get_option( $this->option_name );
+        $checked = isset( $options['passpro_show_logout_button'] ) ? (bool) $options['passpro_show_logout_button'] : true; // Default to true
+        ?>
+        <div class="passpro-setting-card passpro-toggle-card">
+             <div class="passpro-setting-card-content">
+                <div class="passpro-setting-card-header">
+                    <span class="passpro-setting-card-title"><?php esc_html_e( 'Show Logout Button', 'passpro' ); ?></span>
+                </div>
+                <label class="passpro-switch">
+                    <input type="checkbox" id="passpro_show_logout_button" name="<?php echo esc_attr( $this->option_name ); ?>[passpro_show_logout_button]" value="1" <?php checked( 1, $checked ); ?>>
+                    <span class="passpro-slider round"></span>
+                </label>
+                <p class="passpro-setting-card-description">
+                    <?php esc_html_e( 'Display a small logout button in the corner for authenticated visitors.', 'passpro' ); ?>
+                </p>
+            </div>
+            <div class="passpro-setting-card-icon">
+                <span class="dashicons dashicons-exit"></span>
+            </div>
+        </div>
+        <?php
     }
 
 } 

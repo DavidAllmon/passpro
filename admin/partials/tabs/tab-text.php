@@ -79,6 +79,7 @@ $options = get_option($this->option_name);
                 $message_font_size = isset($options['passpro_message_font_size']) ? $options['passpro_message_font_size'] : '14';
                 $message_font_color = isset($options['passpro_message_font_color']) ? $options['passpro_message_font_color'] : '#444444';
                 $message_font_family = isset($options['passpro_message_font_family']) ? $options['passpro_message_font_family'] : '';
+                $message_alignment = isset($options['passpro_message_alignment']) ? $options['passpro_message_alignment'] : 'left'; // Default to left
                 ?>
                 <div class="passpro-text-controls">
                     <div class="passpro-text-size">
@@ -95,6 +96,14 @@ $options = get_option($this->option_name);
                     <div class="passpro-text-family">
                         <label for="passpro_message_font_family"><?php esc_html_e('Font Family:', 'passpro'); ?></label>
                         <input type="text" id="passpro_message_font_family" name="<?php echo esc_attr($this->option_name); ?>[passpro_message_font_family]" value="<?php echo esc_attr($message_font_family); ?>" class="regular-text" placeholder="<?php esc_attr_e('e.g., Arial, sans-serif', 'passpro'); ?>" />
+                    </div>
+                    <div class="passpro-text-alignment">
+                        <label for="passpro_message_alignment"><?php esc_html_e('Text Alignment:', 'passpro'); ?></label>
+                        <select id="passpro_message_alignment" name="<?php echo esc_attr($this->option_name); ?>[passpro_message_alignment]">
+                            <option value="left" <?php selected($message_alignment, 'left'); ?>><?php esc_html_e('Left', 'passpro'); ?></option>
+                            <option value="center" <?php selected($message_alignment, 'center'); ?>><?php esc_html_e('Center', 'passpro'); ?></option>
+                            <option value="right" <?php selected($message_alignment, 'right'); ?>><?php esc_html_e('Right', 'passpro'); ?></option>
+                        </select>
                     </div>
                 </div>
                 <div class="passpro-text-preview message-preview">

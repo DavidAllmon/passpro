@@ -5,7 +5,7 @@ Tags: password, protection, security, site protection, password protection
 Requires at least: 5.2
 Tested up to: 6.5
 Requires PHP: 7.2
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,16 +93,21 @@ Yes, PassPro works with most popular caching plugins.
 
 == Changelog ==
 
+= 1.0.6 =
+* Added option to toggle frontend logout button visibility (General Settings)
+* Moved frontend logout button to bottom-left and reduced size
+* Added option to set text alignment (Left, Center, Right) for the login page message (Text Styles)
+
 = 1.0.1 =
 * Added enhanced security features to block chat widgets and floating elements on the password page
 * Added JavaScript to intercept and prevent loading of third-party scripts during password protection
 * Added CSS to hide any chat widgets that might bypass script blocking
 * Improved security by dequeuing chat scripts and styles when protection is active
 
-= 1.0.0 =
-* Initial release
-
 == Upgrade Notice ==
+
+= 1.0.6 =
+Introduces new options for controlling the frontend logout button visibility and message text alignment.
 
 = 1.0.1 =
 Security enhancement: This update blocks chat widgets and third-party scripts on the password page to prevent potential information leakage. 

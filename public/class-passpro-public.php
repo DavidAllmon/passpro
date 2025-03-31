@@ -565,7 +565,7 @@ class PassPro_Public {
         }
 
         // --- Message --- (.message)
-        if ( ! empty( $options['passpro_message_font_size'] ) || ! empty( $options['passpro_message_font_color'] ) || ! empty( $options['passpro_message_font_family'] ) ) {
+        if ( ! empty( $options['passpro_message_font_size'] ) || ! empty( $options['passpro_message_font_color'] ) || ! empty( $options['passpro_message_font_family'] ) || ! empty( $options['passpro_message_alignment'] ) ) {
             $css .= "body.login-passpro #login .message, #login .message { ";
             $css .= "margin-top: 20px !important; "; // Add spacing above the message when it's below the form
             if ( ! empty( $options['passpro_message_font_size'] ) ) {
@@ -577,11 +577,15 @@ class PassPro_Public {
             if ( ! empty( $options['passpro_message_font_family'] ) ) {
                 $css .= "font-family: " . esc_attr($options['passpro_message_font_family']) . ", sans-serif !important; ";
             }
+            if ( ! empty( $options['passpro_message_alignment'] ) ) {
+                $css .= "text-align: " . esc_attr($options['passpro_message_alignment']) . " !important; ";
+            }
             $css .= "}\n";
         } else {
             // Add basic styling for the message even if no specific options are set
             $css .= "body.login-passpro #login .message, #login .message { ";
             $css .= "margin-top: 20px !important; "; // Add spacing above the message 
+            $css .= "text-align: left !important; "; // Default alignment if no options are set
             $css .= "}\n";
         }
 
@@ -1155,8 +1159,12 @@ class PassPro_Public {
      * @since    1.0.0
      */
     public function add_logout_button() {
-        // Only show logout button if user is already authenticated
-        if (isset($_COOKIE[$this->cookie_name]) && $_COOKIE[$this->cookie_name] === $this->generate_cookie_hash()) {
+        // Get options to check if the button should be shown
+        $options = get_option( $this->option_name );
+        $show_logout_button = isset( $options['passpro_show_logout_button'] ) ? (bool) $options['passpro_show_logout_button'] : true; // Default to true if not set
+
+        // Only show logout button if setting is enabled AND user is authenticated
+        if ($show_logout_button && isset($_COOKIE[$this->cookie_name]) && $_COOKIE[$this->cookie_name] === $this->generate_cookie_hash()) {
             ?>
             <div class="passpro-logout-container">
                 <a href="<?php echo esc_url(admin_url('admin-post.php?action=passpro_logout')); ?>" class="passpro-logout-button">
@@ -1166,8 +1174,8 @@ class PassPro_Public {
             <style>
             .passpro-logout-container {
                 position: fixed;
-                bottom: 20px;
-                right: 20px;
+                bottom: 15px; /* Slightly lower */
+                left: 15px;  /* Changed from right */
                 z-index: 9999;
             }
             .passpro-logout-button {
@@ -1176,23 +1184,24 @@ class PassPro_Public {
                 justify-content: center;
                 background-color: #2271b1;
                 color: #fff;
-                border-radius: 50px;
-                padding: 8px 16px;
+                border-radius: 30px; /* Slightly smaller radius */
+                padding: 5px 12px; /* Reduced padding */
                 text-decoration: none;
-                font-size: 14px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                transition: all 0.3s ease;
+                font-size: 12px; /* Reduced font size */
+                box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+                transition: all 0.2s ease;
             }
             .passpro-logout-button:hover {
                 background-color: #135e96;
                 color: #fff;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                box-shadow: 0 2px 5px rgba(0,0,0,0.25);
             }
             .passpro-logout-button .dashicons {
-                margin-right: 5px;
-                font-size: 16px;
-                width: 16px;
-                height: 16px;
+                margin-right: 4px; /* Reduced margin */
+                font-size: 14px; /* Reduced icon size */
+                width: 14px;
+                height: 14px;
+                line-height: inherit; /* Ensure vertical alignment */
             }
             </style>
             <?php

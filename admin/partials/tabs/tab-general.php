@@ -31,6 +31,7 @@ if ( ! defined( 'WPINC' ) ) {
         if (method_exists($this, 'render_enabled_field')) $this->render_enabled_field();
         if (method_exists($this, 'render_password_field')) $this->render_password_field();
         if (method_exists($this, 'render_allowed_ips_field')) $this->render_allowed_ips_field();
+        if (method_exists($this, 'render_show_logout_button_field')) $this->render_show_logout_button_field();
         ?>
     </div>
 </div> 
