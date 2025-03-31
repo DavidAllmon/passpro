@@ -55,6 +55,7 @@ class PassPro_DB {
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             password_hash varchar(255) NOT NULL,
             name varchar(255) DEFAULT '',
+            email varchar(255) DEFAULT '',
             uses_remaining int(11) DEFAULT NULL,
             used_count int(11) DEFAULT 0,
             date_created datetime DEFAULT CURRENT_TIMESTAMP,
@@ -88,7 +89,22 @@ class PassPro_DB {
      */
     public function get_password($id) {
         global $wpdb;
-        return $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->passwords_table} WHERE id = %d", $id));
+        $password = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->passwords_table} WHERE id = %d", $id));
+        
+        // If password is found, add the readable password for use in admin and emails
+        if ($password) {
+            // We don't have access to the original password, but for new passwords added or viewed
+            // within the same session, we can provide it from the transient
+            $saved_password = get_transient('passpro_password_' . $id);
+            if ($saved_password) {
+                $password->password = $saved_password;
+            } else {
+                // For admin display, we'll show a placeholder
+                $password->password = __('(Hidden for security - only visible when creating or editing)', 'passpro');
+            }
+        }
+        
+        return $password;
     }
 
     /**
@@ -104,6 +120,7 @@ class PassPro_DB {
         $defaults = array(
             'password' => '',
             'name' => '',
+            'email' => '',
             'uses_remaining' => null,
             'used_count' => 0,
             'date_created' => current_time('mysql'),
@@ -127,6 +144,7 @@ class PassPro_DB {
             array(
                 '%s', // password_hash
                 '%s', // name
+                '%s', // email
                 '%d', // uses_remaining
                 '%d', // used_count
                 '%s', // date_created
@@ -154,6 +172,7 @@ class PassPro_DB {
         $allowed_fields = array(
             'password_hash' => '%s',
             'name' => '%s',
+            'email' => '%s',
             'uses_remaining' => '%d',
             'used_count' => '%d',
             'expiry_date' => '%s',
@@ -306,6 +325,33 @@ class PassPro_DB {
     }
 
     /**
+     * Add email column to the passwords table if it doesn't exist
+     *
+     * @since    1.0.0
+     * @return   bool    Success status
+     */
+    public function add_email_column() {
+        global $wpdb;
+        
+        // Check if the column already exists
+        $column_exists = $wpdb->get_results(
+            "SHOW COLUMNS FROM {$this->passwords_table} LIKE 'email'"
+        );
+        
+        // If email column doesn't exist, add it
+        if (empty($column_exists)) {
+            // Add the email column
+            $result = $wpdb->query(
+                "ALTER TABLE {$this->passwords_table} ADD COLUMN email VARCHAR(255) DEFAULT '' AFTER name"
+            );
+            
+            return $result !== false;
+        }
+        
+        return true;
+    }
+
+    /**
      * Migrate passwords from plain text to hashes
      *
      * @since    1.0.0
@@ -313,6 +359,9 @@ class PassPro_DB {
      */
     public function migrate_to_password_hashes() {
         global $wpdb;
+        
+        // First, make sure the email column exists
+        $this->add_email_column();
         
         // Check if the column name needs updating
         $column_exists = $wpdb->get_results(

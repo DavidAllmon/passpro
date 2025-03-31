@@ -30,14 +30,32 @@ if ( ! defined( 'WPINC' ) ) {
             case 'added':
                 $message_text = __('Password added successfully.', 'passpro');
                 break;
+            case 'added_email_sent':
+                $message_text = __('Password added successfully and login details sent by email.', 'passpro');
+                break;
+            case 'added_email_failed':
+                $message_text = __('Password added successfully but failed to send email with login details.', 'passpro');
+                break;
             case 'updated':
                 $message_text = __('Password updated successfully.', 'passpro');
+                break;
+            case 'updated_email_sent':
+                $message_text = __('Password updated successfully and login details sent by email.', 'passpro');
+                break;
+            case 'updated_email_failed':
+                $message_text = __('Password updated successfully but failed to send email with login details.', 'passpro');
                 break;
             case 'deleted':
                 $message_text = __('Password deleted successfully.', 'passpro');
                 break;
             case 'status_updated':
                 $message_text = __('Password status updated successfully.', 'passpro');
+                break;
+            case 'email_sent':
+                $message_text = __('Login details sent by email successfully.', 'passpro');
+                break;
+            case 'email_failed':
+                $message_text = __('Failed to send login details by email.', 'passpro');
                 break;
         }
         
@@ -66,6 +84,12 @@ if ( ! defined( 'WPINC' ) ) {
                 break;
             case 'not_found':
                 $error_text = __('Password not found.', 'passpro');
+                break;
+            case 'email_not_configured':
+                $error_text = __('Cannot send email. No email address is configured for this password.', 'passpro');
+                break;
+            case 'password_not_available':
+                $error_text = __('Cannot send email. The password is no longer available in plain text. Please edit the password to reset it and then send the email.', 'passpro');
                 break;
         }
         
@@ -134,6 +158,12 @@ if ( ! defined( 'WPINC' ) ) {
                             <label for="name"><?php esc_html_e('Name/Description', 'passpro'); ?></label>
                             <input type="text" name="name" id="name" class="regular-text" value="<?php echo $editing ? esc_attr($password_to_edit->name) : ''; ?>">
                             <p class="description"><?php esc_html_e('Optional name or description for this password (for your reference only).', 'passpro'); ?></p>
+                        </div>
+                        
+                        <div class="passpro-form-group">
+                            <label for="email"><?php esc_html_e('Email Address', 'passpro'); ?></label>
+                            <input type="email" name="email" id="email" class="regular-text" value="<?php echo $editing ? esc_attr($password_to_edit->email) : ''; ?>">
+                            <p class="description"><?php esc_html_e('Optional email address to send login credentials to.', 'passpro'); ?></p>
                         </div>
                         
                         <div class="passpro-form-group">
@@ -338,6 +368,13 @@ if ( ! defined( 'WPINC' ) ) {
                                 <?php esc_html_e('Edit', 'passpro'); ?>
                             </a>
                             
+                            <?php if (!empty($password->email)): ?>
+                            <a href="<?php echo esc_url(wp_nonce_url(add_query_arg(array('action' => 'send_email', 'password_id' => $password->id), admin_url('admin.php?page=' . $this->plugin_name . '_passwords')), 'passpro_password_action_' . $password->id)); ?>" class="button button-secondary">
+                                <span class="dashicons dashicons-email"></span>
+                                <?php esc_html_e('Send Email', 'passpro'); ?>
+                            </a>
+                            <?php endif; ?>
+                            
                             <?php if ($status !== 'expired'): ?>
                             <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=' . $this->plugin_name . '_passwords')); ?>" class="passpro-inline-form">
                                 <?php wp_nonce_field('passpro_password_action'); ?>
@@ -486,6 +523,13 @@ if ( ! defined( 'WPINC' ) ) {
                                             <span class="dashicons dashicons-edit"></span>
                                             <?php esc_html_e('Edit', 'passpro'); ?>
                                         </a>
+                                        
+                                        <?php if (!empty($password->email)): ?>
+                                        <a href="<?php echo esc_url(wp_nonce_url(add_query_arg(array('action' => 'send_email', 'password_id' => $password->id), admin_url('admin.php?page=' . $this->plugin_name . '_passwords')), 'passpro_password_action_' . $password->id)); ?>" class="button button-small button-secondary">
+                                            <span class="dashicons dashicons-email"></span>
+                                            <?php esc_html_e('Send Email', 'passpro'); ?>
+                                        </a>
+                                        <?php endif; ?>
                                         
                                         <?php if ($status !== 'expired'): ?>
                                         <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=' . $this->plugin_name . '_passwords')); ?>" class="passpro-inline-form">
@@ -876,7 +920,8 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 .passpro-form-group input[type="text"],
-.passpro-form-group input[type="number"] {
+.passpro-form-group input[type="number"],
+.passpro-form-group input[type="email"] {
     width: 100%;
     padding: 8px 12px;
     border-radius: 4px;

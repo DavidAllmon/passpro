@@ -5,7 +5,7 @@ Tags: password, protection, security, site protection, password protection
 Requires at least: 5.2
 Tested up to: 6.5
 Requires PHP: 7.2
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,6 +93,11 @@ Yes, PassPro works with most popular caching plugins.
 
 == Changelog ==
 
+= 1.0.8 =
+* Fixed email input field styling to match other form fields
+* Improved form field consistency across the password management interface
+* Enhanced user experience with consistent input field sizes
+
 = 1.0.7 =
 * Improved Text Styles tab with dropdown font selectors for easier font selection
 * Fixed WordPress color picker functionality in the Appearance tab
@@ -112,6 +117,9 @@ Yes, PassPro works with most popular caching plugins.
 * Improved security by dequeuing chat scripts and styles when protection is active
 
 == Upgrade Notice ==
+
+= 1.0.8 =
+This update fixes styling issues with the email input field and improves the overall consistency of the form interface in the password management page.
 
 = 1.0.7 =
 This update improves the admin interface with dropdown font selectors, fixes color picker issues, and streamlines the settings page by removing unnecessary previews.

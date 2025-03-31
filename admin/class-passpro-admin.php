@@ -1377,6 +1377,24 @@ class PassPro_Admin {
                     }
                     wp_redirect(add_query_arg('message', 'status_updated', $redirect_url));
                     exit;
+                case 'send_email':
+                    $password = $this->db->get_password($password_id);
+                    if ($password && !empty($password->email)) {
+                        // Either use the stored password from transient or retrieve from password object
+                        $password_text = get_transient('passpro_password_' . $password_id);
+                        if (!$password_text || $password_text === __('(Hidden for security - only visible when creating or editing)', 'passpro')) {
+                            // If we don't have the original password, we need to inform the user
+                            wp_redirect(add_query_arg('error', 'password_not_available', $redirect_url));
+                            exit;
+                        }
+                        
+                        $email_sent = $this->send_password_email($password->email, $password_text, $password->name);
+                        $message = $email_sent ? 'email_sent' : 'email_failed';
+                        wp_redirect(add_query_arg('message', $message, $redirect_url));
+                        exit;
+                    }
+                    wp_redirect(add_query_arg('error', 'email_not_configured', $redirect_url));
+                    exit;
             }
         }
     }
@@ -1410,9 +1428,13 @@ class PassPro_Admin {
             }
         }
 
+        // Get the email address if provided
+        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+
         $data = array(
             'password' => $password,
             'name' => isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '',
+            'email' => $email,
             'uses_remaining' => isset($_POST['uses_remaining']) && $_POST['uses_remaining'] !== '' ? intval($_POST['uses_remaining']) : null,
             'expiry_date' => $expiry_date,
             'bypass_url' => isset($_POST['bypass_url']) ? esc_url_raw($_POST['bypass_url']) : '',
@@ -1422,7 +1444,19 @@ class PassPro_Admin {
         $result = $this->db->add_password($data);
 
         if ($result) {
-            wp_redirect(add_query_arg('message', 'added', $redirect_url));
+            // Store the plain password temporarily for sending emails
+            // This will expire after 24 hours (86400 seconds)
+            set_transient('passpro_password_' . $result, $password, 86400);
+            
+            $redirect_message = 'added';
+            
+            // If email is provided, send the password email
+            if (!empty($email)) {
+                $email_sent = $this->send_password_email($email, $password, $data['name']);
+                $redirect_message = $email_sent ? 'added_email_sent' : 'added_email_failed';
+            }
+            
+            wp_redirect(add_query_arg('message', $redirect_message, $redirect_url));
         } else {
             wp_redirect(add_query_arg('error', 'add_failed', $redirect_url));
         }
@@ -1459,9 +1493,13 @@ class PassPro_Admin {
             }
         }
 
+        // Get the email address if provided
+        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+
         $data = array(
             'password' => $password,
             'name' => isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '',
+            'email' => $email,
             'uses_remaining' => isset($_POST['uses_remaining']) && $_POST['uses_remaining'] !== '' ? intval($_POST['uses_remaining']) : null,
             'expiry_date' => $expiry_date,
             'bypass_url' => isset($_POST['bypass_url']) ? esc_url_raw($_POST['bypass_url']) : '',
@@ -1470,7 +1508,19 @@ class PassPro_Admin {
         $result = $this->db->update_password($password_id, $data);
 
         if ($result !== false) {
-            wp_redirect(add_query_arg('message', 'updated', $redirect_url));
+            // Store the plain password temporarily for sending emails
+            // This will expire after 24 hours (86400 seconds)
+            set_transient('passpro_password_' . $password_id, $password, 86400);
+            
+            $redirect_message = 'updated';
+            
+            // If email is provided, send the password email
+            if (!empty($email)) {
+                $email_sent = $this->send_password_email($email, $password, $data['name']);
+                $redirect_message = $email_sent ? 'updated_email_sent' : 'updated_email_failed';
+            }
+            
+            wp_redirect(add_query_arg('message', $redirect_message, $redirect_url));
         } else {
             wp_redirect(add_query_arg('error', 'update_failed', $redirect_url));
         }
@@ -1583,6 +1633,149 @@ class PassPro_Admin {
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * Send a password email with login details
+     * 
+     * @since    1.0.0
+     * @param    string    $email       Email address to send to
+     * @param    string    $password    The password
+     * @param    string    $name        Optional name/description for the password
+     * @return   bool      Whether the email was sent successfully
+     */
+    private function send_password_email($email, $password, $name = '') {
+        if (empty($email) || empty($password)) {
+            return false;
+        }
+
+        $site_name = get_bloginfo('name');
+        $site_url = get_bloginfo('url');
+        
+        // Email subject
+        $subject = sprintf(__('[%s] Your Protected Site Access Details', 'passpro'), $site_name);
+        
+        // Build HTML email content
+        $message = '<!DOCTYPE html>
+        <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <title>' . sprintf(__('Your Access to %s', 'passpro'), $site_name) . '</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                .container {
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    padding: 20px;
+                }
+                .header {
+                    background-color: #f8f9fa;
+                    padding: 15px;
+                    border-radius: 5px 5px 0 0;
+                    border-bottom: 1px solid #ddd;
+                    margin-bottom: 20px;
+                }
+                .footer {
+                    margin-top: 20px;
+                    padding-top: 15px;
+                    border-top: 1px solid #ddd;
+                    font-size: 12px;
+                    color: #777;
+                }
+                h1 {
+                    color: #0073aa;
+                    margin: 0 0 10px 0;
+                }
+                .password-box {
+                    background-color: #f8f9fa;
+                    border: 1px solid #ddd;
+                    padding: 15px;
+                    border-radius: 4px;
+                    margin: 15px 0;
+                    font-family: Consolas, Monaco, monospace;
+                    font-size: 18px;
+                }
+                .button {
+                    display: inline-block;
+                    background-color: #0073aa;
+                    color: white;
+                    padding: 10px 20px;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    margin: 15px 0;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>' . sprintf(__('Your Access to %s', 'passpro'), $site_name) . '</h1>
+                </div>
+                
+                <p>' . __('Hello,', 'passpro') . '</p>
+                
+                <p>' . sprintf(__('You have been given access to <strong>%s</strong>.', 'passpro'), $site_name) . '</p>';
+                
+        if (!empty($name)) {
+            $message .= '<p>' . sprintf(__('Access details for: <strong>%s</strong>', 'passpro'), esc_html($name)) . '</p>';
+        }
+        
+        $message .= '<h3>' . __('Your access details:', 'passpro') . '</h3>
+                
+                <p><strong>' . __('Website:', 'passpro') . '</strong> ' . $site_url . '</p>
+                
+                <p><strong>' . __('Password:', 'passpro') . '</strong></p>
+                <div class="password-box">' . esc_html($password) . '</div>
+                
+                <p>' . __('You can visit the site using the link below:', 'passpro') . '</p>
+                
+                <p><a href="' . esc_url($site_url) . '" class="button">' . __('Visit Website', 'passpro') . '</a></p>
+                
+                <p>' . __('When prompted, enter the password above to gain access.', 'passpro') . '</p>
+                
+                <div class="footer">
+                    <p>' . __('Thank you!', 'passpro') . '</p>
+                    <p>' . sprintf(__('This email was sent from %s', 'passpro'), $site_name) . '</p>
+                </div>
+            </div>
+        </body>
+        </html>';
+        
+        // Create plain text version for clients that don't support HTML
+        $text_message = sprintf(__("Hello,\n\nYou have been given access to %s.\n\n", 'passpro'), $site_name);
+        
+        if (!empty($name)) {
+            $text_message .= sprintf(__("Access details for: %s\n\n", 'passpro'), $name);
+        }
+        
+        $text_message .= sprintf(__("Website: %s\n", 'passpro'), $site_url);
+        $text_message .= sprintf(__("Password: %s\n\n", 'passpro'), $password);
+        $text_message .= sprintf(__("You can visit the site using the link below:\n%s\n\n", 'passpro'), $site_url);
+        $text_message .= __("When prompted, enter the password above to gain access.\n\n", 'passpro');
+        $text_message .= __("Thank you!", 'passpro');
+        
+        // Send the email with HTML content
+        $headers = array(
+            'Content-Type: text/html; charset=UTF-8',
+            'From: ' . $site_name . ' <' . get_option('admin_email') . '>'
+        );
+        
+        // Add filter to set alt body for email clients that don't support HTML
+        add_filter('wp_mail_content_type', function() { return 'text/html'; });
+        
+        $sent = wp_mail($email, $subject, $message, $headers);
+        
+        // Remove the filter to avoid affecting other emails
+        remove_filter('wp_mail_content_type', function() { return 'text/html'; });
+        
+        return $sent;
     }
 
 } 
