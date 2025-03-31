@@ -1570,9 +1570,9 @@ class PassPro_Admin {
                 <div class="passpro-setting-card-header">
                     <span class="passpro-setting-card-title"><?php esc_html_e( 'Show Logout Button', 'passpro' ); ?></span>
                 </div>
-                <label class="passpro-switch">
+                <label class="passpro-toggle-switch" for="passpro_show_logout_button">
                     <input type="checkbox" id="passpro_show_logout_button" name="<?php echo esc_attr( $this->option_name ); ?>[passpro_show_logout_button]" value="1" <?php checked( 1, $checked ); ?>>
-                    <span class="passpro-slider round"></span>
+                    <span class="passpro-toggle-slider"></span>
                 </label>
                 <p class="passpro-setting-card-description">
                     <?php esc_html_e( 'Display a small logout button in the corner for authenticated visitors.', 'passpro' ); ?>

@@ -5,7 +5,7 @@ Tags: password, protection, security, site protection, password protection
 Requires at least: 5.2
 Tested up to: 6.5
 Requires PHP: 7.2
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,6 +93,13 @@ Yes, PassPro works with most popular caching plugins.
 
 == Changelog ==
 
+= 1.0.7 =
+* Improved Text Styles tab with dropdown font selectors for easier font selection
+* Fixed WordPress color picker functionality in the Appearance tab
+* Removed text preview sections from the Text Styles settings to streamline the interface
+* Fixed z-index issues with color pickers appearing behind other elements
+* Optimized admin JavaScript for better color picker handling
+
 = 1.0.6 =
 * Added option to toggle frontend logout button visibility (General Settings)
 * Moved frontend logout button to bottom-left and reduced size
@@ -105,6 +112,9 @@ Yes, PassPro works with most popular caching plugins.
 * Improved security by dequeuing chat scripts and styles when protection is active
 
 == Upgrade Notice ==
+
+= 1.0.7 =
+This update improves the admin interface with dropdown font selectors, fixes color picker issues, and streamlines the settings page by removing unnecessary previews.
 
 = 1.0.6 =
 Introduces new options for controlling the frontend logout button visibility and message text alignment.

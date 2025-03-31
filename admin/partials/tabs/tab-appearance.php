@@ -162,9 +162,8 @@ $options = get_option($this->option_name);
                 <?php 
                 $bg_color = isset($options['passpro_background_color']) ? $options['passpro_background_color'] : '#f1f1f1';
                 ?>
-                <div class="passpro-color-field-wrapper">
-                    <input type="text" id="passpro_background_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_background_color]" value="<?php echo esc_attr($bg_color); ?>" class="passpro-color-picker-button" data-default-color="#f1f1f1" />
-                    <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($bg_color); ?>" data-target="passpro_background_color" />
+                <div class="passpro-color-field">
+                    <input type="text" id="passpro_background_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_background_color]" value="<?php echo esc_attr($bg_color); ?>" class="passpro-color-picker" data-default-color="#f1f1f1" />
                 </div>
                 <p class="passpro-setting-card-description">
                     <?php esc_html_e('Select the background color for the login page.', 'passpro'); ?>

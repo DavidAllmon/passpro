@@ -1,5 +1,57 @@
+/**
+ * PassPro Admin JavaScript
+ * Handles all admin panel interactions and UI updates
+ */
 jQuery(document).ready(function($) {
-    // Tab navigation functionality
+    
+    // ---- Color Picker Initialization ----
+    function initColorPickers() {
+        // Initialize color pickers the standard WordPress way
+        $('.passpro-color-picker').wpColorPicker({
+            change: function(event, ui) {
+                // Get the ID of the changed element to determine what to update
+                var id = $(this).attr('id');
+                var newColor = ui.color.toString();
+                
+                console.log('Color changed for', id, 'to', newColor);
+                
+                // Trigger updates based on what changed
+                if (id.indexOf('box_') !== -1) {
+                    updateLoginBoxPreview();
+                } else if (id.indexOf('button_') !== -1) {
+                    updateButtonPreview();
+                }
+                // We no longer have text previews to update
+            }
+        });
+        
+        // Fix positioning of color pickers to ensure they appear on top
+        $('.wp-picker-holder, .iris-picker').css({
+            'z-index': '999999',
+            'position': 'absolute'
+        });
+        
+        // Make parent elements not clip the picker
+        $('.wp-picker-container').parents().css('overflow', 'visible');
+    }
+    
+    // Add CSS fixes for color picker positioning without expanding boxes
+    $('head').append('<style>' +
+        // Position the iris color picker absolutely so it doesn't affect parent layout
+        '.wp-picker-holder { position: absolute !important; z-index: 999999 !important; }' +
+        '.iris-picker { z-index: 999999 !important; }' +
+        '.wp-picker-container { position: relative !important; }' +
+        // Ensure parent elements don't clip the picker
+        '.form-table td, .form-table th, .form-table tr, ' +
+        '.passpro-setting-card-content, .passpro-color-field { overflow: visible !important; }' +
+        // Prevent iris picker from expanding parent container
+        '.passpro-setting-card { overflow: visible !important; }' +
+        '.passpro-setting-card-content { overflow: visible !important; height: auto !important; }' +
+        // Make sure WP admin menu doesn't overlap with color picker
+        '.iris-picker, .wp-picker-holder { margin-top: 2px; }' +
+    '</style>');
+    
+    // ---- Tab Navigation ----
     $('#passpro-settings-tabs-nav a').on('click', function(e) {
         e.preventDefault();
         
@@ -11,23 +63,22 @@ jQuery(document).ready(function($) {
         $('.passpro-tab-content').removeClass('passpro-tab-active');
         $($(this).attr('href')).addClass('passpro-tab-active');
         
-        // Re-initialize color pickers in the newly activated tab
+        // Update previews for the active tab
         var targetTabId = $(this).attr('href');
         setTimeout(function() {
-            // Initialize WP color pickers only for tabs that need them
-            if (targetTabId !== '#passpro-tab-button') {
-                // Re-initialize custom color pickers for Text tab, Loginbox tab, and Appearance tab
-                if (targetTabId === '#passpro-tab-text' || targetTabId === '#passpro-tab-loginbox' || targetTabId === '#passpro-tab-appearance') {
-                    initCustomColorPickers(targetTabId);
-                }
-            } else {
-                // Re-initialize custom color pickers for Button tab
-                initButtonCustomColorPickers();
+            if (targetTabId === '#passpro-tab-loginbox') {
+                updateLoginBoxPreview();
+            } else if (targetTabId === '#passpro-tab-button') {
+                updateButtonPreview();
             }
+            // No longer need to update text previews
+            
+            // Make sure color pickers are properly initialized in the newly active tab
+            initColorPickers();
         }, 100);
     });
     
-    // Media uploader for logo
+    // ---- Media Uploader for Logo ----
     $('.passpro-upload-button').on('click', function(e) {
         e.preventDefault();
         
@@ -82,6 +133,8 @@ jQuery(document).ready(function($) {
         button.hide();
     });
     
+    // ---- Preview Update Functions ----
+    
     // Update the preview of the login box when settings change
     function updateLoginBoxPreview() {
         var preview = $('#loginbox-preview');
@@ -99,121 +152,6 @@ jQuery(document).ready(function($) {
             'border-style': 'solid'
         });
     }
-    
-    // Initialize custom color pickers for any tab
-    function initCustomColorPickers(tabId) {
-        // Close any existing WP color pickers
-        $(tabId + ' .passpro-color-picker').each(function() {
-            if ($(this).hasClass('wp-color-picker')) {
-                $(this).wpColorPicker('close');
-            }
-        });
-        
-        // Convert standard color pickers to custom ones
-        $(tabId + ' .passpro-color-picker').each(function() {
-            var $this = $(this);
-            var colorVal = $this.val() || $this.data('default-color') || '#ffffff';
-            var id = $this.attr('id');
-            var defaultColor = $this.data('default-color') || '#ffffff';
-            
-            // Don't modify if already converted
-            if ($this.parent().hasClass('passpro-color-field-wrapper')) {
-                return;
-            }
-            
-            // Create new custom color picker structure
-            $this.wrap('<div class="passpro-color-field-wrapper"></div>');
-            $this.addClass('passpro-color-picker-button').removeClass('passpro-color-picker');
-            $this.after('<input type="color" class="passpro-color-preview" value="' + colorVal + '" data-target="' + id + '" />');
-            
-            // Set up event handlers
-            $this.siblings('.passpro-color-preview').on('input', function() {
-                var colorValue = $(this).val();
-                var targetId = $(this).data('target');
-                $('#' + targetId).val(colorValue);
-                
-                // Update any relevant previews
-                if (tabId === '#passpro-tab-text') {
-                    updateTextPreviews();
-                } else if (tabId === '#passpro-tab-loginbox') {
-                    updateLoginBoxPreview();
-                }
-            });
-            
-            $this.on('input', function() {
-                var colorValue = $(this).val();
-                var id = $(this).attr('id');
-                $('[data-target="' + id + '"]').val(colorValue);
-                
-                // Update any relevant previews
-                if (tabId === '#passpro-tab-text') {
-                    updateTextPreviews();
-                } else if (tabId === '#passpro-tab-loginbox') {
-                    updateLoginBoxPreview();
-                }
-            });
-        });
-    }
-    
-    // Attach change event handlers to login box settings
-    $('#passpro_box_border_width, #passpro_box_border_radius').on('input change', updateLoginBoxPreview);
-    
-    // Initial preview update for login box
-    setTimeout(function() {
-        if ($('#passpro-tab-loginbox').hasClass('passpro-tab-active')) {
-            updateLoginBoxPreview();
-        }
-    }, 300);
-    
-    // Update the preview of text styles when settings change
-    function updateTextPreviews() {
-        // Headline preview
-        var headlinePreview = $('#headline-preview-text');
-        var headlineFontSize = $('#passpro_headline_font_size').val() || '20';
-        var headlineFontColor = $('#passpro_headline_font_color').val() || '#444444';
-        var headlineFontFamily = $('#passpro_headline_font_family').val() || 'inherit';
-        
-        headlinePreview.css({
-            'font-size': headlineFontSize + 'px',
-            'color': headlineFontColor,
-            'font-family': headlineFontFamily || 'inherit'
-        });
-        
-        // Message preview
-        var messagePreview = $('#message-preview-text');
-        var messageFontSize = $('#passpro_message_font_size').val() || '14';
-        var messageFontColor = $('#passpro_message_font_color').val() || '#444444';
-        var messageFontFamily = $('#passpro_message_font_family').val() || 'inherit';
-        
-        messagePreview.css({
-            'font-size': messageFontSize + 'px',
-            'color': messageFontColor,
-            'font-family': messageFontFamily || 'inherit'
-        });
-        
-        // Label preview
-        var labelPreview = $('#label-preview-text');
-        var labelFontSize = $('#passpro_label_font_size').val() || '14';
-        var labelFontColor = $('#passpro_label_font_color').val() || '#444444';
-        var labelFontFamily = $('#passpro_label_font_family').val() || 'inherit';
-        
-        labelPreview.css({
-            'font-size': labelFontSize + 'px',
-            'color': labelFontColor,
-            'font-family': labelFontFamily || 'inherit'
-        });
-    }
-    
-    // Attach change event handlers to text style settings
-    $('#passpro_headline_font_size, #passpro_message_font_size, #passpro_label_font_size').on('input change', updateTextPreviews);
-    $('#passpro_headline_font_family, #passpro_message_font_family, #passpro_label_font_family').on('input change', updateTextPreviews);
-    
-    // Initial preview update for text styles
-    setTimeout(function() {
-        if ($('#passpro-tab-text').hasClass('passpro-tab-active')) {
-            updateTextPreviews();
-        }
-    }, 300);
     
     // Update the preview of the button when settings change
     function updateButtonPreview() {
@@ -361,73 +299,51 @@ jQuery(document).ready(function($) {
         );
     }
     
-    // Initialize custom color pickers for Button Styles tab
-    function initButtonCustomColorPickers() {
-        // Set up the color preview inputs to update the text inputs
-        $('.passpro-color-preview').off('input').on('input', function() {
-            var colorValue = $(this).val();
-            var targetId = $(this).data('target');
-            $('#' + targetId).val(colorValue);
-            
-            // Update any UI that depends on this color
-            updateButtonPreview();
-        });
-        
-        // Set up the text inputs to update the color preview inputs
-        $('.passpro-color-picker-button').off('input').on('input', function() {
-            var colorValue = $(this).val();
-            var id = $(this).attr('id');
-            $('[data-target="' + id + '"]').val(colorValue);
-            
-            // Update any UI that depends on this color
-            updateButtonPreview();
-        });
-    }
+    // ---- Event Handlers ----
+    
+    // Attach change event handlers to login box settings
+    $('#passpro_box_border_width, #passpro_box_border_radius').on('input change', updateLoginBoxPreview);
+    
+    // Remove text style event handlers since there are no previews to update
     
     // Attach change handlers to button text, border, size, alignment and padding
     $('#passpro_button_text_label, #passpro_button_border_radius, #passpro_button_border_width').on('input change', updateButtonPreview);
     $('#passpro_button_width, #passpro_button_height, #passpro_button_alignment').on('input change', updateButtonPreview);
     $('#passpro_button_padding_top, #passpro_button_padding_right, #passpro_button_padding_bottom, #passpro_button_padding_left').on('input change', updateButtonPreview);
     
-    // Initialize on page load based on which tab is active
-    setTimeout(function() {
-        // Initialize color pickers for the active tab
-        if ($('#passpro-tab-button').hasClass('passpro-tab-active')) {
-            initButtonCustomColorPickers();
-            updateButtonPreview();
-        } else if ($('#passpro-tab-text').hasClass('passpro-tab-active')) {
-            initCustomColorPickers('#passpro-tab-text');
-            updateTextPreviews();
-        } else if ($('#passpro-tab-loginbox').hasClass('passpro-tab-active')) {
-            initCustomColorPickers('#passpro-tab-loginbox');
-            updateLoginBoxPreview();
-        } else if ($('#passpro-tab-appearance').hasClass('passpro-tab-active')) {
-            initCustomColorPickers('#passpro-tab-appearance');
-        }
-    }, 300);
-    
-    // Extra cleanup for Button tab - remove any unwanted elements
-    function cleanupButtonTab() {
-        // Find and remove any unwanted "Login Form Preview" text or elements in the Button tab
-        // This is a comprehensive cleanup that should remove anything that isn't part of our intentional design
-        $('#passpro-tab-button').find('.passpro-box-preview, .passpro-preview-label, .passpro-preview-input, .passpro-preview-button, #loginbox-preview').remove();
+    // ---- Cleanup Functions ----
+    function cleanupColorPickers() {
+        // Remove all old HTML5 color inputs
+        $('input[type="color"].passpro-color-preview').remove();
         
-        // Remove any text nodes that might be directly under the tab content
-        $('#passpro-tab-button').contents().filter(function() {
-            return this.nodeType === 3; // Text nodes
-        }).remove();
-        
-        // Find any divs that aren't part of our intended structure
-        $('#passpro-tab-button > div:not(.passpro-settings-header):not(.passpro-settings-grid)').remove();
+        // Remove old wrappers - be more specific to avoid affecting the WP color picker
+        $('.passpro-color-field-wrapper').each(function() {
+            var textInput = $(this).find('input[type="text"]');
+            if (textInput.length > 0) {
+                // Add the right class if it doesn't have it
+                if (!textInput.hasClass('passpro-color-picker')) {
+                    textInput.addClass('passpro-color-picker');
+                }
+                // Move the input outside the wrapper
+                $(this).after(textInput);
+                // Remove the wrapper
+                $(this).remove();
+            }
+        });
     }
     
-    // Call cleanup when the button tab is shown
-    $('#passpro-settings-tabs-nav a[href="#passpro-tab-button"]').on('click', function() {
-        setTimeout(cleanupButtonTab, 10);
-    });
+    // Clean up any old color picker elements
+    cleanupColorPickers();
     
-    // Also run cleanup on page load if the button tab is active
-    if ($('#passpro-tab-button').hasClass('passpro-tab-active')) {
-        setTimeout(cleanupButtonTab, 10);
+    // Initialize the JavaScript after cleanup
+    initColorPickers();
+    
+    // Update active tab previews
+    var activeTabId = '#' + $('.passpro-tab-content.passpro-tab-active').attr('id');
+    if (activeTabId === '#passpro-tab-loginbox') {
+        updateLoginBoxPreview();
+    } else if (activeTabId === '#passpro-tab-button') {
+        updateButtonPreview();
     }
+    // No longer need to update text previews
 }); 

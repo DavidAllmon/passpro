@@ -64,32 +64,28 @@ $options = get_option($this->option_name);
                     <div class="passpro-button-colors-normal">
                         <div class="passpro-button-color">
                             <label for="passpro_button_bg_color"><?php esc_html_e('Background Color:', 'passpro'); ?></label>
-                            <div class="passpro-color-field-wrapper">
-                                <input type="text" id="passpro_button_bg_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_button_bg_color]" value="<?php echo esc_attr($bg_color); ?>" class="passpro-color-picker-button" data-default-color="#2271b1" />
-                                <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($bg_color); ?>" data-target="passpro_button_bg_color" />
+                            <div class="passpro-color-field">
+                                <input type="text" id="passpro_button_bg_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_button_bg_color]" value="<?php echo esc_attr($bg_color); ?>" class="passpro-color-picker" data-default-color="#2271b1" />
                             </div>
                         </div>
                         <div class="passpro-button-color">
                             <label for="passpro_button_text_color"><?php esc_html_e('Text Color:', 'passpro'); ?></label>
-                            <div class="passpro-color-field-wrapper">
-                                <input type="text" id="passpro_button_text_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_button_text_color]" value="<?php echo esc_attr($text_color); ?>" class="passpro-color-picker-button" data-default-color="#ffffff" />
-                                <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($text_color); ?>" data-target="passpro_button_text_color" />
+                            <div class="passpro-color-field">
+                                <input type="text" id="passpro_button_text_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_button_text_color]" value="<?php echo esc_attr($text_color); ?>" class="passpro-color-picker" data-default-color="#ffffff" />
                             </div>
                         </div>
                     </div>
                     <div class="passpro-button-colors-hover">
                         <div class="passpro-button-color">
                             <label for="passpro_button_hover_bg_color"><?php esc_html_e('Hover Background:', 'passpro'); ?></label>
-                            <div class="passpro-color-field-wrapper">
-                                <input type="text" id="passpro_button_hover_bg_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_button_hover_bg_color]" value="<?php echo esc_attr($bg_hover_color); ?>" class="passpro-color-picker-button" data-default-color="#135e96" />
-                                <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($bg_hover_color); ?>" data-target="passpro_button_hover_bg_color" />
+                            <div class="passpro-color-field">
+                                <input type="text" id="passpro_button_hover_bg_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_button_hover_bg_color]" value="<?php echo esc_attr($bg_hover_color); ?>" class="passpro-color-picker" data-default-color="#135e96" />
                             </div>
                         </div>
                         <div class="passpro-button-color">
                             <label for="passpro_button_hover_text_color"><?php esc_html_e('Hover Text Color:', 'passpro'); ?></label>
-                            <div class="passpro-color-field-wrapper">
-                                <input type="text" id="passpro_button_hover_text_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_button_hover_text_color]" value="<?php echo esc_attr($text_hover_color); ?>" class="passpro-color-picker-button" data-default-color="#ffffff" />
-                                <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($text_hover_color); ?>" data-target="passpro_button_hover_text_color" />
+                            <div class="passpro-color-field">
+                                <input type="text" id="passpro_button_hover_text_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_button_hover_text_color]" value="<?php echo esc_attr($text_hover_color); ?>" class="passpro-color-picker" data-default-color="#ffffff" />
                             </div>
                         </div>
                     </div>
@@ -117,9 +113,8 @@ $options = get_option($this->option_name);
                 <div class="passpro-button-border-controls">
                     <div class="passpro-button-border-color">
                         <label for="passpro_button_border_color"><?php esc_html_e('Border Color:', 'passpro'); ?></label>
-                        <div class="passpro-color-field-wrapper">
-                            <input type="text" id="passpro_button_border_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_button_border_color]" value="<?php echo esc_attr($border_color); ?>" class="passpro-color-picker-button" data-default-color="#2271b1" />
-                            <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($border_color); ?>" data-target="passpro_button_border_color" />
+                        <div class="passpro-color-field">
+                            <input type="text" id="passpro_button_border_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_button_border_color]" value="<?php echo esc_attr($border_color); ?>" class="passpro-color-picker" data-default-color="#2271b1" />
                         </div>
                     </div>
                     <div class="passpro-button-border-size">

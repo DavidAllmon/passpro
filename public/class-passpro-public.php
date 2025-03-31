@@ -1167,15 +1167,15 @@ class PassPro_Public {
         if ($show_logout_button && isset($_COOKIE[$this->cookie_name]) && $_COOKIE[$this->cookie_name] === $this->generate_cookie_hash()) {
             ?>
             <div class="passpro-logout-container">
-                <a href="<?php echo esc_url(admin_url('admin-post.php?action=passpro_logout')); ?>" class="passpro-logout-button">
-                    <span class="dashicons dashicons-lock"></span> Logout
+                <a href="<?php echo esc_url(admin_url('admin-post.php?action=passpro_logout')); ?>" class="passpro-logout-button" title="<?php esc_attr_e('Logout', 'passpro'); ?>">
+                    <span class="dashicons dashicons-lock"></span>
                 </a>
             </div>
             <style>
             .passpro-logout-container {
                 position: fixed;
-                bottom: 15px; /* Slightly lower */
-                left: 15px;  /* Changed from right */
+                bottom: 20px; /* Adjusted bottom position */
+                left: 20px;  /* Adjusted left position */
                 z-index: 9999;
             }
             .passpro-logout-button {
@@ -1184,24 +1184,25 @@ class PassPro_Public {
                 justify-content: center;
                 background-color: #2271b1;
                 color: #fff;
-                border-radius: 30px; /* Slightly smaller radius */
-                padding: 5px 12px; /* Reduced padding */
+                border-radius: 50%; /* Make it a circle */
+                width: 36px;  /* Fixed width */
+                height: 36px; /* Fixed height */
+                padding: 0; /* Remove padding */
                 text-decoration: none;
-                font-size: 12px; /* Reduced font size */
-                box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
                 transition: all 0.2s ease;
             }
             .passpro-logout-button:hover {
                 background-color: #135e96;
                 color: #fff;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             }
             .passpro-logout-button .dashicons {
-                margin-right: 4px; /* Reduced margin */
-                font-size: 14px; /* Reduced icon size */
-                width: 14px;
-                height: 14px;
-                line-height: inherit; /* Ensure vertical alignment */
+                margin: 0; /* Remove margin */
+                font-size: 18px; /* Slightly larger icon */
+                width: 18px;
+                height: 18px;
+                line-height: 1; /* Ensure centered */
             }
             </style>
             <?php

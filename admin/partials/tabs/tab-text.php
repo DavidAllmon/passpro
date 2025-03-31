@@ -47,18 +47,25 @@ $options = get_option($this->option_name);
                     </div>
                     <div class="passpro-text-color">
                         <label for="passpro_headline_font_color"><?php esc_html_e('Text Color:', 'passpro'); ?></label>
-                        <div class="passpro-color-field-wrapper">
-                            <input type="text" id="passpro_headline_font_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_headline_font_color]" value="<?php echo esc_attr($headline_font_color); ?>" class="passpro-color-picker-button" data-default-color="#444444" />
-                            <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($headline_font_color); ?>" data-target="passpro_headline_font_color" />
+                        <div class="passpro-color-field">
+                            <input type="text" id="passpro_headline_font_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_headline_font_color]" value="<?php echo esc_attr($headline_font_color); ?>" class="passpro-color-picker" data-default-color="#444444" />
                         </div>
                     </div>
                     <div class="passpro-text-family">
                         <label for="passpro_headline_font_family"><?php esc_html_e('Font Family:', 'passpro'); ?></label>
-                        <input type="text" id="passpro_headline_font_family" name="<?php echo esc_attr($this->option_name); ?>[passpro_headline_font_family]" value="<?php echo esc_attr($headline_font_family); ?>" class="regular-text" placeholder="<?php esc_attr_e('e.g., Arial, sans-serif', 'passpro'); ?>" />
+                        <select id="passpro_headline_font_family" name="<?php echo esc_attr($this->option_name); ?>[passpro_headline_font_family]" class="regular-text">
+                            <option value="" <?php selected($headline_font_family, ''); ?>><?php esc_html_e('Default', 'passpro'); ?></option>
+                            <option value="Arial, sans-serif" <?php selected($headline_font_family, 'Arial, sans-serif'); ?>>Arial</option>
+                            <option value="Helvetica, Arial, sans-serif" <?php selected($headline_font_family, 'Helvetica, Arial, sans-serif'); ?>>Helvetica</option>
+                            <option value="Georgia, serif" <?php selected($headline_font_family, 'Georgia, serif'); ?>>Georgia</option>
+                            <option value="'Times New Roman', Times, serif" <?php selected($headline_font_family, "'Times New Roman', Times, serif"); ?>>Times New Roman</option>
+                            <option value="Verdana, Geneva, sans-serif" <?php selected($headline_font_family, 'Verdana, Geneva, sans-serif'); ?>>Verdana</option>
+                            <option value="'Courier New', Courier, monospace" <?php selected($headline_font_family, "'Courier New', Courier, monospace"); ?>>Courier New</option>
+                            <option value="'Open Sans', sans-serif" <?php selected($headline_font_family, "'Open Sans', sans-serif"); ?>>Open Sans</option>
+                            <option value="'Roboto', sans-serif" <?php selected($headline_font_family, "'Roboto', sans-serif"); ?>>Roboto</option>
+                            <option value="'Lato', sans-serif" <?php selected($headline_font_family, "'Lato', sans-serif"); ?>>Lato</option>
+                        </select>
                     </div>
-                </div>
-                <div class="passpro-text-preview headline-preview">
-                    <span id="headline-preview-text"><?php esc_html_e('Headline Preview Text', 'passpro'); ?></span>
                 </div>
                 <p class="passpro-setting-card-description">
                     <?php esc_html_e('Customize the appearance of the headline text on your login page.', 'passpro'); ?>
@@ -88,14 +95,24 @@ $options = get_option($this->option_name);
                     </div>
                     <div class="passpro-text-color">
                         <label for="passpro_message_font_color"><?php esc_html_e('Text Color:', 'passpro'); ?></label>
-                        <div class="passpro-color-field-wrapper">
-                            <input type="text" id="passpro_message_font_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_message_font_color]" value="<?php echo esc_attr($message_font_color); ?>" class="passpro-color-picker-button" data-default-color="#444444" />
-                            <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($message_font_color); ?>" data-target="passpro_message_font_color" />
+                        <div class="passpro-color-field">
+                            <input type="text" id="passpro_message_font_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_message_font_color]" value="<?php echo esc_attr($message_font_color); ?>" class="passpro-color-picker" data-default-color="#444444" />
                         </div>
                     </div>
                     <div class="passpro-text-family">
                         <label for="passpro_message_font_family"><?php esc_html_e('Font Family:', 'passpro'); ?></label>
-                        <input type="text" id="passpro_message_font_family" name="<?php echo esc_attr($this->option_name); ?>[passpro_message_font_family]" value="<?php echo esc_attr($message_font_family); ?>" class="regular-text" placeholder="<?php esc_attr_e('e.g., Arial, sans-serif', 'passpro'); ?>" />
+                        <select id="passpro_message_font_family" name="<?php echo esc_attr($this->option_name); ?>[passpro_message_font_family]" class="regular-text">
+                            <option value="" <?php selected($message_font_family, ''); ?>><?php esc_html_e('Default', 'passpro'); ?></option>
+                            <option value="Arial, sans-serif" <?php selected($message_font_family, 'Arial, sans-serif'); ?>>Arial</option>
+                            <option value="Helvetica, Arial, sans-serif" <?php selected($message_font_family, 'Helvetica, Arial, sans-serif'); ?>>Helvetica</option>
+                            <option value="Georgia, serif" <?php selected($message_font_family, 'Georgia, serif'); ?>>Georgia</option>
+                            <option value="'Times New Roman', Times, serif" <?php selected($message_font_family, "'Times New Roman', Times, serif"); ?>>Times New Roman</option>
+                            <option value="Verdana, Geneva, sans-serif" <?php selected($message_font_family, 'Verdana, Geneva, sans-serif'); ?>>Verdana</option>
+                            <option value="'Courier New', Courier, monospace" <?php selected($message_font_family, "'Courier New', Courier, monospace"); ?>>Courier New</option>
+                            <option value="'Open Sans', sans-serif" <?php selected($message_font_family, "'Open Sans', sans-serif"); ?>>Open Sans</option>
+                            <option value="'Roboto', sans-serif" <?php selected($message_font_family, "'Roboto', sans-serif"); ?>>Roboto</option>
+                            <option value="'Lato', sans-serif" <?php selected($message_font_family, "'Lato', sans-serif"); ?>>Lato</option>
+                        </select>
                     </div>
                     <div class="passpro-text-alignment">
                         <label for="passpro_message_alignment"><?php esc_html_e('Text Alignment:', 'passpro'); ?></label>
@@ -105,9 +122,6 @@ $options = get_option($this->option_name);
                             <option value="right" <?php selected($message_alignment, 'right'); ?>><?php esc_html_e('Right', 'passpro'); ?></option>
                         </select>
                     </div>
-                </div>
-                <div class="passpro-text-preview message-preview">
-                    <span id="message-preview-text"><?php esc_html_e('Message preview text. This is how your message will look on the login page.', 'passpro'); ?></span>
                 </div>
                 <p class="passpro-setting-card-description">
                     <?php esc_html_e('Customize the appearance of the message text shown on your login page.', 'passpro'); ?>
@@ -136,18 +150,25 @@ $options = get_option($this->option_name);
                     </div>
                     <div class="passpro-text-color">
                         <label for="passpro_label_font_color"><?php esc_html_e('Text Color:', 'passpro'); ?></label>
-                        <div class="passpro-color-field-wrapper">
-                            <input type="text" id="passpro_label_font_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_label_font_color]" value="<?php echo esc_attr($label_font_color); ?>" class="passpro-color-picker-button" data-default-color="#444444" />
-                            <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($label_font_color); ?>" data-target="passpro_label_font_color" />
+                        <div class="passpro-color-field">
+                            <input type="text" id="passpro_label_font_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_label_font_color]" value="<?php echo esc_attr($label_font_color); ?>" class="passpro-color-picker" data-default-color="#444444" />
                         </div>
                     </div>
                     <div class="passpro-text-family">
                         <label for="passpro_label_font_family"><?php esc_html_e('Font Family:', 'passpro'); ?></label>
-                        <input type="text" id="passpro_label_font_family" name="<?php echo esc_attr($this->option_name); ?>[passpro_label_font_family]" value="<?php echo esc_attr($label_font_family); ?>" class="regular-text" placeholder="<?php esc_attr_e('e.g., Arial, sans-serif', 'passpro'); ?>" />
+                        <select id="passpro_label_font_family" name="<?php echo esc_attr($this->option_name); ?>[passpro_label_font_family]" class="regular-text">
+                            <option value="" <?php selected($label_font_family, ''); ?>><?php esc_html_e('Default', 'passpro'); ?></option>
+                            <option value="Arial, sans-serif" <?php selected($label_font_family, 'Arial, sans-serif'); ?>>Arial</option>
+                            <option value="Helvetica, Arial, sans-serif" <?php selected($label_font_family, 'Helvetica, Arial, sans-serif'); ?>>Helvetica</option>
+                            <option value="Georgia, serif" <?php selected($label_font_family, 'Georgia, serif'); ?>>Georgia</option>
+                            <option value="'Times New Roman', Times, serif" <?php selected($label_font_family, "'Times New Roman', Times, serif"); ?>>Times New Roman</option>
+                            <option value="Verdana, Geneva, sans-serif" <?php selected($label_font_family, 'Verdana, Geneva, sans-serif'); ?>>Verdana</option>
+                            <option value="'Courier New', Courier, monospace" <?php selected($label_font_family, "'Courier New', Courier, monospace"); ?>>Courier New</option>
+                            <option value="'Open Sans', sans-serif" <?php selected($label_font_family, "'Open Sans', sans-serif"); ?>>Open Sans</option>
+                            <option value="'Roboto', sans-serif" <?php selected($label_font_family, "'Roboto', sans-serif"); ?>>Roboto</option>
+                            <option value="'Lato', sans-serif" <?php selected($label_font_family, "'Lato', sans-serif"); ?>>Lato</option>
+                        </select>
                     </div>
-                </div>
-                <div class="passpro-text-preview label-preview">
-                    <span id="label-preview-text"><?php esc_html_e('Password:', 'passpro'); ?></span>
                 </div>
                 <p class="passpro-setting-card-description">
                     <?php esc_html_e('Customize the appearance of the form labels on your login page.', 'passpro'); ?>

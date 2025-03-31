@@ -38,9 +38,8 @@ $options = get_option($this->option_name);
                 <?php 
                 $bg_color = isset($options['passpro_box_bg_color']) ? $options['passpro_box_bg_color'] : '#ffffff';
                 ?>
-                <div class="passpro-color-field-wrapper">
-                    <input type="text" id="passpro_box_bg_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_box_bg_color]" value="<?php echo esc_attr($bg_color); ?>" class="passpro-color-picker-button" data-default-color="#ffffff" />
-                    <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($bg_color); ?>" data-target="passpro_box_bg_color" />
+                <div class="passpro-color-field">
+                    <input type="text" id="passpro_box_bg_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_box_bg_color]" value="<?php echo esc_attr($bg_color); ?>" class="passpro-color-picker" data-default-color="#ffffff" />
                 </div>
                 <p class="passpro-setting-card-description">
                     <?php esc_html_e('Choose the background color for the login form container.', 'passpro'); ?>
@@ -65,9 +64,8 @@ $options = get_option($this->option_name);
                 <div class="passpro-border-controls">
                     <div class="passpro-border-color">
                         <label for="passpro_box_border_color"><?php esc_html_e('Border Color:', 'passpro'); ?></label>
-                        <div class="passpro-color-field-wrapper">
-                            <input type="text" id="passpro_box_border_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_box_border_color]" value="<?php echo esc_attr($border_color); ?>" class="passpro-color-picker-button" data-default-color="#dddddd" />
-                            <input type="color" class="passpro-color-preview" value="<?php echo esc_attr($border_color); ?>" data-target="passpro_box_border_color" />
+                        <div class="passpro-color-field">
+                            <input type="text" id="passpro_box_border_color" name="<?php echo esc_attr($this->option_name); ?>[passpro_box_border_color]" value="<?php echo esc_attr($border_color); ?>" class="passpro-color-picker" data-default-color="#dddddd" />
                         </div>
                     </div>
                     <div class="passpro-border-size-controls">
